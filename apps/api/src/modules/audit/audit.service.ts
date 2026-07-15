@@ -16,7 +16,7 @@ export class AuditService {
   constructor(private readonly prisma: PrismaService) {}
 
   async log(
-    action: 'create' | 'update' | 'soft_delete' | 'restore' | 'login' | 'logout' | 'approve' | 'export',
+    action: 'create' | 'update' | 'soft_delete' | 'restore' | 'login' | 'logout' | 'approve' | 'export' | 'backup',
     entityType: string,
     entityId: string | null,
     before: unknown,

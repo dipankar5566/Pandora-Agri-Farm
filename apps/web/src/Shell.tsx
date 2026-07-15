@@ -1,17 +1,23 @@
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import Inventory2Icon from '@mui/icons-material/Inventory2';
-import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import GrassIcon from '@mui/icons-material/Grass';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import LogoutIcon from '@mui/icons-material/Logout';
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
+import MenuIcon from '@mui/icons-material/Menu';
 import PetsIcon from '@mui/icons-material/Pets';
+import SettingsIcon from '@mui/icons-material/Settings';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import {
   AppBar, BottomNavigation, BottomNavigationAction, Box, Drawer, IconButton,
-  List, ListItemButton, ListItemIcon, ListItemText, Paper, Toolbar, Typography, useMediaQuery,
+  List, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper,
+  Toolbar, Typography, useMediaQuery,
 } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { api } from './api';
@@ -30,23 +36,24 @@ export default function Shell(props: {
   const loc = useLocation();
   const qc = useQueryClient();
   const desktop = useMediaQuery('(min-width:900px)');
+  const [moreAnchor, setMoreAnchor] = useState<null | HTMLElement>(null);
 
-  const items = [
+  const all = [
     { path: '/', label: t('nav.dashboard'), icon: <DashboardIcon /> },
     { path: '/herd', label: t('nav.herd'), icon: <PetsIcon /> },
     { path: '/breeding', label: t('nav.breeding'), icon: <FavoriteIcon /> },
     { path: '/health', label: t('nav.health'), icon: <MedicalServicesIcon /> },
     { path: '/inventory', label: t('nav.inventory'), icon: <Inventory2Icon /> },
+    { path: '/feed', label: t('nav.feed'), icon: <GrassIcon /> },
+    { path: '/finance', label: t('nav.finance'), icon: <CurrencyRupeeIcon /> },
+    { path: '/tasks', label: t('nav.tasks'), icon: <TaskAltIcon /> },
+    { path: '/settings', label: t('nav.settings'), icon: <SettingsIcon /> },
   ];
-  const current = loc.pathname.startsWith('/health')
-    ? '/health'
-    : loc.pathname.startsWith('/inventory')
-    ? '/inventory'
-    : loc.pathname.startsWith('/breeding')
-    ? '/breeding'
-    : loc.pathname.startsWith('/herd') || loc.pathname.startsWith('/animals')
-      ? '/herd'
-      : '/';
+  const primary = all.slice(0, 4); // phone bottom nav: Home, Herd, Breeding, Health
+  const more = all.slice(4);
+  const current =
+    all.slice(1).find((it) => loc.pathname.startsWith(it.path))?.path ??
+    (loc.pathname.startsWith('/animals') ? '/herd' : '/');
 
   const switchLocale = () => {
     const next = i18n.language === 'en' ? 'bn' : 'en';
@@ -83,10 +90,10 @@ export default function Shell(props: {
       {desktop && (
         <Drawer variant="permanent" sx={{ width: DRAWER, [`& .MuiDrawer-paper`]: { width: DRAWER } }}>
           <Toolbar variant="dense" />
-          <List>
-            {items.map((it) => (
+          <List dense>
+            {all.map((it) => (
               <ListItemButton key={it.path} selected={current === it.path} onClick={() => nav(it.path)}>
-                <ListItemIcon>{it.icon}</ListItemIcon>
+                <ListItemIcon sx={{ minWidth: 38 }}>{it.icon}</ListItemIcon>
                 <ListItemText primary={it.label} />
               </ListItemButton>
             ))}
@@ -94,18 +101,37 @@ export default function Shell(props: {
         </Drawer>
       )}
 
-      <Box component="main" sx={{ flexGrow: 1, p: 2, pb: desktop ? 2 : 9 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 2, pb: desktop ? 2 : 9, minWidth: 0 }}>
         <Toolbar variant="dense" />
         {props.children}
       </Box>
 
       {!desktop && (
         <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 10 }} elevation={4}>
-          <BottomNavigation value={current} onChange={(_, v) => nav(v)} showLabels>
-            {items.map((it) => (
+          <BottomNavigation
+            value={primary.some((p) => p.path === current) ? current : 'more'}
+            onChange={(e, v) => {
+              if (v === 'more') setMoreAnchor(e.currentTarget as HTMLElement);
+              else nav(v);
+            }}
+            showLabels
+          >
+            {primary.map((it) => (
               <BottomNavigationAction key={it.path} value={it.path} label={it.label} icon={it.icon} />
             ))}
+            <BottomNavigationAction value="more" label={t('nav.more')} icon={<MenuIcon />} />
           </BottomNavigation>
+          <Menu open={!!moreAnchor} anchorEl={moreAnchor} onClose={() => setMoreAnchor(null)}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+            {more.map((it) => (
+              <MenuItem key={it.path} selected={current === it.path}
+                onClick={() => { setMoreAnchor(null); nav(it.path); }}>
+                <ListItemIcon>{it.icon}</ListItemIcon>
+                {it.label}
+              </MenuItem>
+            ))}
+          </Menu>
         </Paper>
       )}
     </Box>

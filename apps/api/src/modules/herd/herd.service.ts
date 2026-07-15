@@ -5,8 +5,10 @@ import type {
   BatchWeighInput, BulkIntakeInput, CreateAnimalInput, ExitAnimalInput,
   ListAnimalsQuery, MoveAnimalInput, UpdateAnimalInput,
 } from '@pandora/contracts';
+import { forwardRef, Inject } from '@nestjs/common';
 import { AppError } from '../../common/errors';
 import { AuditService } from '../audit/audit.service';
+import { FarmOpsService } from '../ops/farmops.service';
 import { PrismaService } from '../../prisma.service';
 
 type Tx = Prisma.TransactionClient;
@@ -23,6 +25,8 @@ export class HerdService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    @Inject(forwardRef(() => FarmOpsService))
+    private readonly farmOps: FarmOpsService,
   ) {}
 
   /** Timeline writer — every herd mutation records its event here (NFR-11). */
@@ -301,6 +305,14 @@ export class HerdService {
         { type: input.exitType, price: input.price, cause: input.causeCategory },
         day(input.exitDate), { type: 'exit', id: exit.id },
       );
+      // Sale income books itself (Phase 3 §4.7) — same transaction.
+      if ((input.exitType === 'sale' || input.exitType === 'cull_sale') && input.price) {
+        await this.farmOps.bookExitSale(tx, {
+          animalId: id, exitId: exit.id, exitType: input.exitType,
+          exitDate: day(input.exitDate), price: input.price,
+          buyerName: input.buyerName, actor,
+        });
+      }
       await this.audit.log('update', 'Animal', id, { status: 'active' }, { status: statusByType[input.exitType], exit: input }, tx);
       return exit;
     });

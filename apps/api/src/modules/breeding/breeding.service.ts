@@ -297,6 +297,27 @@ export class BreedingService {
         { total: input.totalBorn, alive: input.bornAlive, kids: kids.map((k) => k.tagNumber) },
         kiddingDate, { type: 'kidding', id: kidding.id },
       );
+      // Kid-care tasks (Phase 1 §5.3: kid mortality is the #1 economic risk).
+      if (kids.length) {
+        await tx.task.createMany({
+          data: [
+            {
+              id: ulid(), title: `Colostrum & navel check — ${kids.map((k) => k.tagNumber).join(', ')}`,
+              taskType: 'inspection', dueOn: kiddingDate, animalId: kids[0].id, createdBy: actor,
+            },
+            {
+              id: ulid(), title: `Dam check after kidding — ${doe.tagNumber}`,
+              taskType: 'inspection', dueOn: new Date(kiddingDate.getTime() + 86400000),
+              animalId: doe.id, createdBy: actor,
+            },
+            {
+              id: ulid(), title: `Kid weight day 7 — ${kids.map((k) => k.tagNumber).join(', ')}`,
+              taskType: 'inspection', dueOn: new Date(kiddingDate.getTime() + 7 * 86400000),
+              animalId: kids[0].id, createdBy: actor,
+            },
+          ],
+        });
+      }
       await this.audit.log('create', 'Kidding', kidding.id, null, { doe: doe.tagNumber, totalBorn: input.totalBorn, bornAlive: input.bornAlive, kids: kids.map((k) => k.tagNumber) }, tx);
       return { kidding, kidsCreated: kids, stillborn: input.totalBorn - input.bornAlive };
     }, { timeout: 30000 });

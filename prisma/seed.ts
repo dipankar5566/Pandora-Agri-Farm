@@ -133,6 +133,24 @@ async function main(): Promise<void> {
   }
   console.log('✓ health protocols');
 
+  // Finance categories (Phase 3 §7.6)
+  const CATS: Array<['income' | 'expense', string, string]> = [
+    ['expense', 'Feed', 'খাদ্য'], ['expense', 'Medicine', 'ওষুধ'], ['expense', 'Vaccine', 'টিকা'],
+    ['expense', 'Labour', 'শ্রম'], ['expense', 'Electricity', 'বিদ্যুৎ'], ['expense', 'Fuel & Transport', 'জ্বালানি ও পরিবহন'],
+    ['expense', 'Vet Fees', 'পশুচিকিৎসক ফি'], ['expense', 'Equipment', 'যন্ত্রপাতি'], ['expense', 'Construction', 'নির্মাণ'],
+    ['expense', 'Animal Purchase', 'পশু ক্রয়'], ['expense', 'Insurance', 'বিমা'], ['expense', 'Miscellaneous', 'বিবিধ'],
+    ['income', 'Goat Sale', 'ছাগল বিক্রয়'], ['income', 'Cull Sale', 'বাতিল বিক্রয়'],
+    ['income', 'Manure Sale', 'সার বিক্রয়'], ['income', 'Other Income', 'অন্যান্য আয়'],
+  ];
+  for (const [kind, name, nameBn] of CATS) {
+    await prisma.financeCategory.upsert({
+      where: { kind_name: { kind, name } },
+      create: { id: ulid(), kind, name, nameBn, isSystem: true },
+      update: {},
+    });
+  }
+  console.log('✓ finance categories');
+
   const ownerPhone = process.env.SEED_OWNER_PHONE ?? '9999999999';
   const ownerPassword = process.env.SEED_OWNER_PASSWORD;
   const existing = await prisma.user.findFirst({ where: { phone: ownerPhone } });

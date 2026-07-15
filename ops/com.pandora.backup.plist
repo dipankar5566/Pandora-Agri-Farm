@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.pandora.backup</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string><string>-c</string>
+    <string>source __ROOT__/.env 2>/dev/null; /usr/bin/curl -sf -X POST http://localhost:${PORT:-3300}/api/v1/ops/backup/scheduled -H "X-Ops-Token: $OPS_TOKEN" >> /tmp/pandora-backup.log 2>&1</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict><key>Hour</key><integer>1</integer><key>Minute</key><integer>0</integer></dict>
+  <key>StandardErrorPath</key><string>/tmp/pandora-backup.err</string>
+</dict>
+</plist>

@@ -11,9 +11,13 @@ import Breeding from './pages/Breeding';
 import Inventory from './pages/Inventory';
 import BulkIntake from './pages/BulkIntake';
 import Dashboard from './pages/Dashboard';
+import Feed from './pages/Feed';
+import Finance from './pages/Finance';
 import Health from './pages/Health';
 import Herd from './pages/Herd';
 import Register from './pages/Register';
+import Settings from './pages/Settings';
+import Tasks from './pages/Tasks';
 import { makeTheme } from './theme';
 
 export interface Me {
@@ -65,6 +69,10 @@ export default function App() {
             <Route path="/breeding" element={<Breeding />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/health" element={<Health />} />
+            <Route path="/feed" element={<Feed />} />
+            <Route path="/finance" element={<Finance />} />
+            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/settings" element={<Settings me={me.data} />} />
             <Route path="/animals/:id" element={<Animal />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

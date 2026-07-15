@@ -801,3 +801,99 @@ model ProtocolAdministration {
   @@index([protocolId, animalId, givenOn(sort: Desc)])
   @@map("protocol_administrations")
 }
+
+// ── Module 5: Feed, Finance-lite, Tasks (Phase 3 §7.5–7.8) ──────────
+
+enum LedgerKind {
+  income
+  expense
+}
+
+enum PaymentMethod {
+  cash
+  bank
+  upi
+  cheque
+  credit
+}
+
+enum TaskStatus {
+  pending
+  done
+  skipped
+}
+
+model FeedLog {
+  id         String   @id @db.Char(26)
+  fedOn      DateTime @map("fed_on") @db.Date
+  penId      String   @map("pen_id") @db.Char(26)
+  itemId     String   @map("item_id") @db.Char(26)
+  qty        Decimal  @db.Decimal(10, 3)
+  wastageQty Decimal  @default(0) @map("wastage_qty") @db.Decimal(10, 3)
+  notes      String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  createdBy  String?  @map("created_by") @db.Char(26)
+
+  @@unique([fedOn, penId, itemId])
+  @@index([fedOn(sort: Desc)])
+  @@map("feed_logs")
+}
+
+model FinanceCategory {
+  id       String       @id @db.Char(26)
+  kind     LedgerKind
+  name     String
+  nameBn   String?      @map("name_bn")
+  isSystem Boolean      @default(false) @map("is_system")
+  entries  LedgerEntry[]
+
+  @@unique([kind, name])
+  @@map("finance_categories")
+}
+
+model LedgerEntry {
+  id               String          @id @db.Char(26)
+  entryDate        DateTime        @map("entry_date") @db.Date
+  kind             LedgerKind
+  categoryId       String          @map("category_id") @db.Char(26)
+  amount           Decimal         @db.Decimal(12, 2)
+  paymentMethod    PaymentMethod   @default(cash) @map("payment_method")
+  counterpartyName String?         @map("counterparty_name")
+  animalId         String?         @map("animal_id") @db.Char(26)
+  refType          String?         @map("ref_type")
+  refId            String?         @map("ref_id")
+  description      String?
+  createdAt        DateTime        @default(now()) @map("created_at")
+  createdBy        String?         @map("created_by") @db.Char(26)
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+  updatedBy        String?         @map("updated_by") @db.Char(26)
+  deletedAt        DateTime?       @map("deleted_at")
+  deletedBy        String?         @map("deleted_by") @db.Char(26)
+  category         FinanceCategory @relation(fields: [categoryId], references: [id])
+
+  @@index([entryDate(sort: Desc)])
+  @@index([kind, categoryId, entryDate])
+  @@index([animalId])
+  @@map("ledger_entries")
+}
+
+model Task {
+  id              String     @id @db.Char(26)
+  title           String
+  taskType        String     @default("custom") @map("task_type")
+  dueOn           DateTime   @map("due_on") @db.Date
+  animalId        String?    @map("animal_id") @db.Char(26)
+  penId           String?    @map("pen_id") @db.Char(26)
+  assignedTo      String?    @map("assigned_to") @db.Char(26)
+  status          TaskStatus @default(pending)
+  recurrence      String?    // 'daily' | 'weekly:MON,THU' | null
+  completedAt     DateTime?  @map("completed_at")
+  completedBy     String?    @map("completed_by") @db.Char(26)
+  completionNotes String?    @map("completion_notes")
+  skipReason      String?    @map("skip_reason")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  createdBy       String?    @map("created_by") @db.Char(26)
+
+  @@index([status, dueOn])
+  @@map("tasks")
+}
