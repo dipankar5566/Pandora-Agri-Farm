@@ -1,5 +1,6 @@
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -33,8 +34,11 @@ export default function Shell(props: {
     { path: '/', label: t('nav.dashboard'), icon: <DashboardIcon /> },
     { path: '/herd', label: t('nav.herd'), icon: <PetsIcon /> },
     { path: '/breeding', label: t('nav.breeding'), icon: <FavoriteIcon /> },
+    { path: '/inventory', label: t('nav.inventory'), icon: <Inventory2Icon /> },
   ];
-  const current = loc.pathname.startsWith('/breeding')
+  const current = loc.pathname.startsWith('/inventory')
+    ? '/inventory'
+    : loc.pathname.startsWith('/breeding')
     ? '/breeding'
     : loc.pathname.startsWith('/herd') || loc.pathname.startsWith('/animals')
       ? '/herd'

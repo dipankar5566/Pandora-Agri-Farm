@@ -502,3 +502,130 @@ model KidRecord {
   @@index([kiddingId])
   @@map("kid_records")
 }
+
+// ── Module 3: Inventory (Phase 3 §7.1–7.4) ──────────────────────────
+
+enum ItemType {
+  medicine
+  vaccine
+  dewormer
+  feed
+  mineral
+  supplement
+  consumable
+  equipment
+}
+
+enum ItemUnit {
+  kg
+  g
+  l
+  ml
+  piece
+  dose
+  vial
+  bag
+  bottle
+  packet
+  tablet
+}
+
+enum MovementType {
+  opening
+  purchase
+  consumption
+  adjustment
+  wastage
+  expiry_writeoff
+  return
+}
+
+model Supplier {
+  id           String    @id @db.Char(26)
+  name         String
+  nameBn       String?   @map("name_bn")
+  phone        String?
+  address      String?
+  gstin        String?
+  supplierType String?   @map("supplier_type")
+  notes        String?
+  createdAt    DateTime  @default(now()) @map("created_at")
+  createdBy    String?   @map("created_by") @db.Char(26)
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  updatedBy    String?   @map("updated_by") @db.Char(26)
+  deletedAt    DateTime? @map("deleted_at")
+  deletedBy    String?   @map("deleted_by") @db.Char(26)
+  batches      ItemBatch[]
+
+  @@map("suppliers")
+}
+
+model Item {
+  id                String    @id @db.Char(26)
+  itemType          ItemType  @map("item_type")
+  name              String
+  nameBn            String?   @map("name_bn")
+  unit              ItemUnit
+  category          String?
+  anthelminticClass String?   @map("anthelmintic_class")
+  defaultDosePerKg  Decimal?  @map("default_dose_per_kg") @db.Decimal(8, 4)
+  doseUnit          String?   @map("dose_unit")
+  withdrawalDays    Int?      @map("withdrawal_days")
+  minStockLevel     Decimal?  @map("min_stock_level") @db.Decimal(10, 3)
+  reorderQty        Decimal?  @map("reorder_qty") @db.Decimal(10, 3)
+  costPriceLatest   Decimal?  @map("cost_price_latest") @db.Decimal(12, 2)
+  isActive          Boolean   @default(true) @map("is_active")
+  notes             String?
+  createdAt         DateTime  @default(now()) @map("created_at")
+  createdBy         String?   @map("created_by") @db.Char(26)
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  updatedBy         String?   @map("updated_by") @db.Char(26)
+  deletedAt         DateTime? @map("deleted_at")
+  deletedBy         String?   @map("deleted_by") @db.Char(26)
+  batches           ItemBatch[]
+  movements         StockMovement[]
+
+  @@index([itemType])
+  @@map("items")
+}
+
+model ItemBatch {
+  id           String    @id @db.Char(26)
+  itemId       String    @map("item_id") @db.Char(26)
+  batchNo      String?   @map("batch_no")
+  expiryDate   DateTime? @map("expiry_date") @db.Date
+  supplierId   String?   @map("supplier_id") @db.Char(26)
+  receivedOn   DateTime  @map("received_on") @db.Date
+  qtyReceived  Decimal   @map("qty_received") @db.Decimal(10, 3)
+  qtyRemaining Decimal   @map("qty_remaining") @db.Decimal(10, 3)
+  unitCost     Decimal?  @map("unit_cost") @db.Decimal(12, 2)
+  mrp          Decimal?  @db.Decimal(12, 2)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  createdBy    String?   @map("created_by") @db.Char(26)
+  item         Item      @relation(fields: [itemId], references: [id])
+  supplier     Supplier? @relation(fields: [supplierId], references: [id])
+  movements    StockMovement[]
+
+  @@index([itemId, expiryDate])
+  @@map("item_batches")
+}
+
+model StockMovement {
+  id           String       @id @db.Char(26)
+  itemId       String       @map("item_id") @db.Char(26)
+  batchId      String?      @map("batch_id") @db.Char(26)
+  movementType MovementType @map("movement_type")
+  qty          Decimal      @db.Decimal(10, 3) // signed: + in, − out
+  refType      String?      @map("ref_type")
+  refId        String?      @map("ref_id")
+  movedAt      DateTime     @map("moved_at")
+  reason       String?
+  createdAt    DateTime     @default(now()) @map("created_at")
+  createdBy    String?      @map("created_by") @db.Char(26)
+  item         Item         @relation(fields: [itemId], references: [id])
+  batch        ItemBatch?   @relation(fields: [batchId], references: [id])
+
+  @@index([itemId, movedAt(sort: Desc)])
+  @@index([batchId])
+  @@map("stock_movements")
+}
