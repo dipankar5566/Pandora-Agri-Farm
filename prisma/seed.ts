@@ -69,6 +69,48 @@ async function main(): Promise<void> {
   }
   console.log('✓ roles & permissions');
 
+  // Breeds (Phase 3 §4.1 — Black Bengal defaults tuned for Birbhum).
+  const BREEDS: Array<[string, string, number, number | null, number | null]> = [
+    // name, name_bn, gestation, adult wt kg, puberty days
+    ['Black Bengal', 'ব্ল্যাক বেঙ্গল', 148, 25, 210],
+    ['Sirohi', 'সিরোহি', 150, 40, 270],
+    ['Jamunapari', 'যমুনাপারি', 150, 60, 300],
+    ['Barbari', 'বারবারি', 148, 35, 240],
+    ['Beetal', 'বিটল', 150, 55, 285],
+    ['Osmanabadi', 'ওসমানাবাদি', 150, 32, 240],
+    ['Boer', 'বোয়ার', 150, 90, 240],
+    ['Boer Cross', 'বোয়ার ক্রস', 150, 55, 240],
+    ['Local / Nondescript', 'দেশি', 150, 28, 240],
+  ];
+  for (const [name, nameBn, gestationDays, adultWeightKg, pubertyAgeDays] of BREEDS) {
+    await prisma.breed.upsert({
+      where: { name },
+      create: { id: ulid(), name, nameBn, gestationDays, adultWeightKg, pubertyAgeDays },
+      update: {},
+    });
+  }
+  console.log('✓ breeds');
+
+  // One default shed with starter pens so registration works out of the box.
+  let shed = await prisma.shed.findFirst();
+  if (!shed) {
+    shed = await prisma.shed.create({ data: { id: ulid(), name: 'Main Shed', nameBn: 'মূল শেড' } });
+    const pens: Array<[string, 'general' | 'kidding' | 'buck' | 'kid' | 'isolation']> = [
+      ['A', 'general'], ['B', 'general'], ['Buck', 'buck'],
+      ['Kidding', 'kidding'], ['Kids', 'kid'], ['Isolation', 'isolation'],
+    ];
+    for (const [name, purpose] of pens) {
+      await prisma.pen.create({ data: { id: ulid(), shedId: shed.id, name, purpose } });
+    }
+    console.log('✓ default shed & pens');
+  }
+
+  await prisma.setting.upsert({
+    where: { key: 'tag.next' },
+    create: { key: 'tag.next', value: 1 },
+    update: {},
+  });
+
   const ownerPhone = process.env.SEED_OWNER_PHONE ?? '9999999999';
   const ownerPassword = process.env.SEED_OWNER_PASSWORD;
   const existing = await prisma.user.findFirst({ where: { phone: ownerPhone } });
