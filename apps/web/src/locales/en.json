@@ -319,5 +319,6 @@
   "search.items": "Items",
   "search.suppliers": "Suppliers",
   "search.tasks": "Tasks",
-  "search.ledger": "Finance"
+  "search.ledger": "Finance",
+  "offline.banner": "⚠ Offline — you can read cached pages, but saving needs a connection."
 }

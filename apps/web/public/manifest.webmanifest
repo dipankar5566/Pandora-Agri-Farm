@@ -1,0 +1,14 @@
+{
+  "name": "Pandora Goat Farm",
+  "short_name": "Pandora ERP",
+  "description": "Livestock management for Pandora Goat Farm",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAFAF7",
+  "theme_color": "#2E6B34",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

@@ -319,5 +319,6 @@
   "search.items": "সামগ্রী",
   "search.suppliers": "সরবরাহকারী",
   "search.tasks": "কাজ",
-  "search.ledger": "হিসাব"
+  "search.ledger": "হিসাব",
+  "offline.banner": "⚠ অফলাইন — সংরক্ষিত পাতা দেখা যাবে, কিন্তু সংরক্ষণ করতে সংযোগ লাগবে।"
 }

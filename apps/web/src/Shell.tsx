@@ -23,6 +23,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { api } from './api';
 import type { Me } from './App';
 import GlobalSearch from './components/GlobalSearch';
+import { useOnlineStatus } from './useOnlineStatus';
 
 const DRAWER = 210;
 
@@ -38,6 +39,7 @@ export default function Shell(props: {
   const qc = useQueryClient();
   const desktop = useMediaQuery('(min-width:900px)');
   const [moreAnchor, setMoreAnchor] = useState<null | HTMLElement>(null);
+  const online = useOnlineStatus();
 
   const all = [
     { path: '/', label: t('nav.dashboard'), icon: <DashboardIcon /> },
@@ -107,6 +109,14 @@ export default function Shell(props: {
 
       <Box component="main" sx={{ flexGrow: 1, p: 2, pb: desktop ? 2 : 9, minWidth: 0 }}>
         <Toolbar variant="dense" />
+        {!online && (
+          <Box sx={{
+            bgcolor: 'warning.main', color: 'warning.contrastText', borderRadius: 2,
+            px: 2, py: 0.75, mb: 2, fontSize: 14, fontWeight: 600,
+          }}>
+            {t('offline.banner')}
+          </Box>
+        )}
         {props.children}
       </Box>
 
