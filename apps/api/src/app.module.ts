@@ -19,6 +19,8 @@ import { HerdController } from './modules/herd/herd.controller';
 import { HerdService } from './modules/herd/herd.service';
 import { LookupsService } from './modules/herd/lookups.service';
 import { FarmOpsController } from './modules/ops/farmops.controller';
+import { SalesController } from './modules/sales/sales.controller';
+import { SalesService } from './modules/sales/sales.service';
 import { SearchController } from './modules/search/search.controller';
 import { SearchService } from './modules/search/search.service';
 import { FarmOpsService } from './modules/ops/farmops.service';
@@ -33,7 +35,7 @@ import { UsersService } from './modules/users/users.service';
  * actual domain rules.
  */
 @Module({
-  controllers: [AuthController, UsersController, RolesController, SettingsController, HerdController, BreedingController, InventoryController, HealthController, FarmOpsController, SearchController],
+  controllers: [AuthController, UsersController, RolesController, SettingsController, HerdController, BreedingController, InventoryController, HealthController, FarmOpsController, SearchController, SalesController],
   providers: [
     PrismaService,
     AuditService,
@@ -48,6 +50,7 @@ import { UsersService } from './modules/users/users.service';
     ProtocolsService,
     FarmOpsService,
     SearchService,
+    SalesService,
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_FILTER, useClass: AppExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: IdempotencyInterceptor },

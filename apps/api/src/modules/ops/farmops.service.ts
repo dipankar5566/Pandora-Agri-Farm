@@ -160,23 +160,8 @@ export class FarmOpsService {
     };
   }
 
-  /** Auto ledger entry for an animal exit sale (called by HerdService). */
-  async bookExitSale(tx: Prisma.TransactionClient, opts: {
-    animalId: string; exitId: string; exitType: 'sale' | 'cull_sale'; exitDate: Date;
-    price: number; buyerName?: string | null; actor: string;
-  }) {
-    const catName = opts.exitType === 'sale' ? 'Goat Sale' : 'Cull Sale';
-    const cat = await tx.financeCategory.findUnique({ where: { kind_name: { kind: 'income', name: catName } } });
-    if (!cat) return; // categories unseeded — skip silently rather than block the exit
-    await tx.ledgerEntry.create({
-      data: {
-        id: ulid(), entryDate: opts.exitDate, kind: 'income', categoryId: cat.id,
-        amount: opts.price, paymentMethod: 'cash', counterpartyName: opts.buyerName,
-        animalId: opts.animalId, refType: 'animal_exit', refId: opts.exitId,
-        description: 'Auto: animal sale', createdBy: opts.actor,
-      },
-    });
-  }
+  // NOTE: exit-sale income booking moved to SalesService.cashSaleFromExit
+  // (R2 Module 1) — every sale now flows invoice → payment → ledger.
 
   // ── tasks ──────────────────────────────────────────────────────────
   async listTasks(dateStr: string) {

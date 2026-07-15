@@ -65,6 +65,16 @@ describe('ops module (feed, finance, tasks, dashboard, backup)', () => {
   });
 
   afterAll(async () => {
+    {
+      const saleLines = await prisma.saleInvoiceLine.findMany({ where: { animalId: { in: cleanup.animals } } });
+      const saleInvIds = [...new Set(saleLines.map((l) => l.invoiceId))];
+      const salePays = await prisma.salePayment.findMany({ where: { invoiceId: { in: saleInvIds } } });
+      await prisma.ledgerEntry.deleteMany({ where: { refType: "sale_payment", refId: { in: salePays.map((p) => p.id) } } });
+      await prisma.salePayment.deleteMany({ where: { invoiceId: { in: saleInvIds } } });
+      await prisma.saleInvoiceLine.deleteMany({ where: { invoiceId: { in: saleInvIds } } });
+      await prisma.saleInvoice.deleteMany({ where: { id: { in: saleInvIds } } });
+    }
+
     await prisma.$executeRaw`SET session_replication_role = replica`;
     await prisma.feedLog.deleteMany({ where: { itemId: { in: cleanup.items } } });
     await prisma.$executeRaw`DELETE FROM stock_movements WHERE item_id = ANY(${cleanup.items})`;
@@ -129,11 +139,14 @@ describe('ops module (feed, finance, tasks, dashboard, backup)', () => {
       exitType: 'sale', exitDate: today(), price: 11000, buyerName: 'ops-test buyer',
     });
     expect(exit.status).toBe(201);
+    // R2: a priced exit generates invoice + full payment; income comes from the payment.
+    const line = await prisma.saleInvoiceLine.findFirst({ where: { animalId } });
+    expect(line).toBeTruthy();
     const ledger = await get(`/api/v1/ledger-entries?month=${month()}&kind=income`);
-    const auto = ledger.body.data.find((e: any) => e.animalId === animalId);
+    const auto = ledger.body.data.find(
+      (e: any) => e.refType === 'sale_payment' && Number(e.amount) === 11000 && e.counterpartyName === 'ops-test buyer',
+    );
     expect(auto).toBeTruthy();
-    expect(Number(auto.amount)).toBe(11000);
-    expect(auto.refType).toBe('animal_exit');
 
     // Auto entries are read-only in the ledger.
     const patch = await request(server).patch(`/api/v1/ledger-entries/${auto.id}`)

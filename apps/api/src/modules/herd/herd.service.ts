@@ -8,7 +8,7 @@ import type {
 import { forwardRef, Inject } from '@nestjs/common';
 import { AppError } from '../../common/errors';
 import { AuditService } from '../audit/audit.service';
-import { FarmOpsService } from '../ops/farmops.service';
+import { SalesService } from '../sales/sales.service';
 import { PrismaService } from '../../prisma.service';
 
 type Tx = Prisma.TransactionClient;
@@ -25,8 +25,8 @@ export class HerdService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
-    @Inject(forwardRef(() => FarmOpsService))
-    private readonly farmOps: FarmOpsService,
+    @Inject(forwardRef(() => SalesService))
+    private readonly sales: SalesService,
   ) {}
 
   /** Timeline writer — every herd mutation records its event here (NFR-11). */
@@ -305,10 +305,11 @@ export class HerdService {
         { type: input.exitType, price: input.price, cause: input.causeCategory },
         day(input.exitDate), { type: 'exit', id: exit.id },
       );
-      // Sale income books itself (Phase 3 §4.7) — same transaction.
+      // A priced exit IS a cash sale: one-line invoice + full payment +
+      // ledger income, all in this transaction (R2 sales integration).
       if ((input.exitType === 'sale' || input.exitType === 'cull_sale') && input.price) {
-        await this.farmOps.bookExitSale(tx, {
-          animalId: id, exitId: exit.id, exitType: input.exitType,
+        await this.sales.cashSaleFromExit(tx, {
+          animalId: id, tagNumber: animal.tagNumber, exitId: exit.id,
           exitDate: day(input.exitDate), price: input.price,
           buyerName: input.buyerName, actor,
         });

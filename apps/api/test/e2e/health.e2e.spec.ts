@@ -80,6 +80,16 @@ describe('health module', () => {
   });
 
   afterAll(async () => {
+    {
+      const saleLines = await prisma.saleInvoiceLine.findMany({ where: { animalId: { in: animalIds } } });
+      const saleInvIds = [...new Set(saleLines.map((l) => l.invoiceId))];
+      const salePays = await prisma.salePayment.findMany({ where: { invoiceId: { in: saleInvIds } } });
+      await prisma.ledgerEntry.deleteMany({ where: { refType: "sale_payment", refId: { in: salePays.map((p) => p.id) } } });
+      await prisma.salePayment.deleteMany({ where: { invoiceId: { in: saleInvIds } } });
+      await prisma.saleInvoiceLine.deleteMany({ where: { invoiceId: { in: saleInvIds } } });
+      await prisma.saleInvoice.deleteMany({ where: { id: { in: saleInvIds } } });
+    }
+
     await prisma.$executeRaw`SET session_replication_role = replica`;
     await prisma.$executeRaw`DELETE FROM stock_movements WHERE item_id = ANY(${itemIds})`;
     await prisma.protocolDue.deleteMany({ where: { animalId: { in: animalIds } } });

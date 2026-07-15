@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 const MODULES = [
   'dashboard', 'livestock', 'breeding', 'health', 'inventory',
-  'feed', 'finance', 'tasks', 'settings',
+  'feed', 'finance', 'sales', 'tasks', 'settings',
 ] as const;
 type Mod = (typeof MODULES)[number];
 type Level = 'none' | 'view' | 'edit' | 'approve';
@@ -18,7 +18,8 @@ const MATRIX: Record<string, Partial<Record<Mod, Level>>> = {
   owner: Object.fromEntries(MODULES.map((m) => [m, 'approve'])),
   farm_manager: {
     dashboard: 'view', livestock: 'approve', breeding: 'approve', health: 'approve',
-    inventory: 'approve', feed: 'approve', tasks: 'approve', finance: 'edit', settings: 'view',
+    inventory: 'approve', feed: 'approve', tasks: 'approve', finance: 'edit',
+    sales: 'approve', settings: 'view',
   },
   veterinarian: {
     dashboard: 'view', livestock: 'view', breeding: 'edit', health: 'approve',
@@ -29,9 +30,9 @@ const MATRIX: Record<string, Partial<Record<Mod, Level>>> = {
     inventory: 'edit', feed: 'edit', tasks: 'edit',
   },
   worker: { dashboard: 'view', livestock: 'view', feed: 'edit', tasks: 'edit' },
-  sales: { dashboard: 'view', livestock: 'view', finance: 'edit', tasks: 'view' },
+  sales: { dashboard: 'view', livestock: 'view', finance: 'edit', sales: 'edit', tasks: 'view' },
   purchase_manager: { dashboard: 'view', inventory: 'approve', finance: 'edit' },
-  accountant: { dashboard: 'view', finance: 'edit' },
+  accountant: { dashboard: 'view', finance: 'edit', sales: 'view' },
   visitor: { dashboard: 'view' },
 };
 
@@ -108,6 +109,11 @@ async function main(): Promise<void> {
   await prisma.setting.upsert({
     where: { key: 'tag.next' },
     create: { key: 'tag.next', value: 1 },
+    update: {},
+  });
+  await prisma.setting.upsert({
+    where: { key: 'invoice.next' },
+    create: { key: 'invoice.next', value: 1 },
     update: {},
   });
 

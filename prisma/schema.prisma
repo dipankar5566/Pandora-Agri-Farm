@@ -897,3 +897,105 @@ model Task {
   @@index([status, dueOn])
   @@map("tasks")
 }
+
+// ── R2 Module 1: Sales & Customers (Phase 3 §10 reserved extensions) ─
+
+enum CustomerType {
+  individual
+  trader
+  butcher
+  institution
+  other
+}
+
+enum SaleLineType {
+  animal
+  manure
+  vermicompost
+  feed
+  other
+}
+
+model Customer {
+  id           String       @id @db.Char(26)
+  name         String
+  nameBn       String?      @map("name_bn")
+  phone        String?
+  address      String?
+  gstin        String?
+  customerType CustomerType @default(individual) @map("customer_type")
+  notes        String?
+  createdAt    DateTime     @default(now()) @map("created_at")
+  createdBy    String?      @map("created_by") @db.Char(26)
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+  updatedBy    String?      @map("updated_by") @db.Char(26)
+  deletedAt    DateTime?    @map("deleted_at")
+  deletedBy    String?      @map("deleted_by") @db.Char(26)
+  invoices     SaleInvoice[]
+  payments     SalePayment[]
+
+  @@map("customers")
+}
+
+model SaleInvoice {
+  id           String    @id @db.Char(26)
+  invoiceNo    String    @unique @map("invoice_no")
+  customerId   String?   @map("customer_id") @db.Char(26)
+  buyerName    String?   @map("buyer_name") // walk-in cash sales
+  invoiceDate  DateTime  @map("invoice_date") @db.Date
+  subtotal     Decimal   @db.Decimal(12, 2)
+  taxAmount    Decimal   @default(0) @map("tax_amount") @db.Decimal(12, 2)
+  total        Decimal   @db.Decimal(12, 2)
+  cancelledAt  DateTime? @map("cancelled_at")
+  cancelReason String?   @map("cancel_reason")
+  refType      String?   @map("ref_type") // 'animal_exit' for the fast path
+  refId        String?   @map("ref_id")
+  notes        String?
+  createdAt    DateTime  @default(now()) @map("created_at")
+  createdBy    String?   @map("created_by") @db.Char(26)
+  customer     Customer? @relation(fields: [customerId], references: [id])
+  lines        SaleInvoiceLine[]
+  payments     SalePayment[]
+
+  @@index([invoiceDate(sort: Desc)])
+  @@index([customerId])
+  @@map("sale_invoices")
+}
+
+model SaleInvoiceLine {
+  id          String       @id @db.Char(26)
+  invoiceId   String       @map("invoice_id") @db.Char(26)
+  lineType    SaleLineType @map("line_type")
+  animalId    String?      @map("animal_id") @db.Char(26)
+  description String
+  hsnCode     String?      @map("hsn_code")
+  qty         Decimal      @db.Decimal(10, 3)
+  unit        String       @default("piece")
+  unitPrice   Decimal      @map("unit_price") @db.Decimal(12, 2)
+  gstRatePct  Decimal      @default(0) @map("gst_rate_pct") @db.Decimal(4, 2)
+  amount      Decimal      @db.Decimal(12, 2)
+  invoice     SaleInvoice  @relation(fields: [invoiceId], references: [id])
+
+  @@index([invoiceId])
+  @@index([animalId])
+  @@map("sale_invoice_lines")
+}
+
+model SalePayment {
+  id         String       @id @db.Char(26)
+  customerId String?      @map("customer_id") @db.Char(26)
+  invoiceId  String?      @map("invoice_id") @db.Char(26)
+  amount     Decimal      @db.Decimal(12, 2)
+  method     PaymentMethod @default(cash)
+  paidOn     DateTime     @map("paid_on") @db.Date
+  reference  String?
+  notes      String?
+  createdAt  DateTime     @default(now()) @map("created_at")
+  createdBy  String?      @map("created_by") @db.Char(26)
+  customer   Customer?    @relation(fields: [customerId], references: [id])
+  invoice    SaleInvoice? @relation(fields: [invoiceId], references: [id])
+
+  @@index([invoiceId])
+  @@index([customerId, paidOn(sort: Desc)])
+  @@map("sale_payments")
+}

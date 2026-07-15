@@ -16,6 +16,7 @@ import Finance from './pages/Finance';
 import Health from './pages/Health';
 import Herd from './pages/Herd';
 import Register from './pages/Register';
+import Sales from './pages/Sales';
 import Settings from './pages/Settings';
 import Tasks from './pages/Tasks';
 import { makeTheme } from './theme';
@@ -71,6 +72,7 @@ export default function App() {
             <Route path="/health" element={<Health />} />
             <Route path="/feed" element={<Feed />} />
             <Route path="/finance" element={<Finance />} />
+            <Route path="/sales" element={<Sales />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/settings" element={<Settings me={me.data} />} />
             <Route path="/animals/:id" element={<Animal />} />

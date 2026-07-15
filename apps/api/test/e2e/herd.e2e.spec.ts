@@ -49,6 +49,16 @@ describe('herd module', () => {
   });
 
   afterAll(async () => {
+    {
+      const saleLines = await prisma.saleInvoiceLine.findMany({ where: { animalId: { in: createdAnimalIds } } });
+      const saleInvIds = [...new Set(saleLines.map((l) => l.invoiceId))];
+      const salePays = await prisma.salePayment.findMany({ where: { invoiceId: { in: saleInvIds } } });
+      await prisma.ledgerEntry.deleteMany({ where: { refType: "sale_payment", refId: { in: salePays.map((p) => p.id) } } });
+      await prisma.salePayment.deleteMany({ where: { invoiceId: { in: saleInvIds } } });
+      await prisma.saleInvoiceLine.deleteMany({ where: { invoiceId: { in: saleInvIds } } });
+      await prisma.saleInvoice.deleteMany({ where: { id: { in: saleInvIds } } });
+    }
+
     // remove test animals bottom-up
     const ids = createdAnimalIds;
     await prisma.animalEvent.deleteMany({ where: { animalId: { in: ids } } });
