@@ -3,6 +3,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import GrassIcon from '@mui/icons-material/Grass';
+import GroupsIcon from '@mui/icons-material/Groups';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -53,6 +54,7 @@ export default function Shell(props: {
     { path: '/sales', label: t('nav.sales'), icon: <StorefrontIcon /> },
     { path: '/purchases', label: t('nav.purchases'), icon: <ShoppingCartIcon /> },
     { path: '/finance', label: t('nav.finance'), icon: <CurrencyRupeeIcon /> },
+    { path: '/employees', label: t('nav.employees'), icon: <GroupsIcon /> },
     { path: '/tasks', label: t('nav.tasks'), icon: <TaskAltIcon /> },
     { path: '/settings', label: t('nav.settings'), icon: <SettingsIcon /> },
   ];

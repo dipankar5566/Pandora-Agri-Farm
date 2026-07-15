@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 const MODULES = [
   'dashboard', 'livestock', 'breeding', 'health', 'inventory',
-  'feed', 'finance', 'sales', 'purchases', 'tasks', 'settings',
+  'feed', 'finance', 'sales', 'purchases', 'employees', 'tasks', 'settings',
 ] as const;
 type Mod = (typeof MODULES)[number];
 type Level = 'none' | 'view' | 'edit' | 'approve';
@@ -19,7 +19,7 @@ const MATRIX: Record<string, Partial<Record<Mod, Level>>> = {
   farm_manager: {
     dashboard: 'view', livestock: 'approve', breeding: 'approve', health: 'approve',
     inventory: 'approve', feed: 'approve', tasks: 'approve', finance: 'edit',
-    sales: 'approve', purchases: 'approve', settings: 'view',
+    sales: 'approve', purchases: 'approve', employees: 'approve', settings: 'view',
   },
   veterinarian: {
     dashboard: 'view', livestock: 'view', breeding: 'edit', health: 'approve',
@@ -32,7 +32,7 @@ const MATRIX: Record<string, Partial<Record<Mod, Level>>> = {
   worker: { dashboard: 'view', livestock: 'view', feed: 'edit', tasks: 'edit' },
   sales: { dashboard: 'view', livestock: 'view', finance: 'edit', sales: 'edit', tasks: 'view' },
   purchase_manager: { dashboard: 'view', inventory: 'approve', finance: 'edit', purchases: 'approve' },
-  accountant: { dashboard: 'view', finance: 'edit', sales: 'view', purchases: 'view' },
+  accountant: { dashboard: 'view', finance: 'edit', sales: 'view', purchases: 'view', employees: 'view' },
   visitor: { dashboard: 'view' },
 };
 

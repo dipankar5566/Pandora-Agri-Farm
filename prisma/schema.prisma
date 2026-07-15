@@ -1058,3 +1058,80 @@ model PurchasePayment {
   @@index([supplierId, paidOn(sort: Desc)])
   @@map("purchase_payments")
 }
+
+// ── R2 Module 3: Employees (attendance, payroll) ────────────────────
+
+enum WageType {
+  monthly
+  daily
+}
+
+enum AttendanceStatus {
+  present
+  absent
+  half_day
+  leave
+}
+
+model Employee {
+  id          String    @id @db.Char(26)
+  fullName    String    @map("full_name")
+  nameBn      String?   @map("name_bn")
+  phone       String?
+  designation String?
+  wageType    WageType  @map("wage_type")
+  wageRate    Decimal   @map("wage_rate") @db.Decimal(12, 2)
+  joinedOn    DateTime  @map("joined_on") @db.Date
+  leftOn      DateTime? @map("left_on") @db.Date
+  userId      String?   @map("user_id") @db.Char(26) // optional app login link
+  notes       String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  createdBy   String?   @map("created_by") @db.Char(26)
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  updatedBy   String?   @map("updated_by") @db.Char(26)
+  deletedAt   DateTime? @map("deleted_at")
+  deletedBy   String?   @map("deleted_by") @db.Char(26)
+  attendance  AttendanceRecord[]
+  payrollRuns PayrollRun[]
+
+  @@map("employees")
+}
+
+model AttendanceRecord {
+  id         String           @id @db.Char(26)
+  employeeId String           @map("employee_id") @db.Char(26)
+  date       DateTime         @db.Date
+  status     AttendanceStatus
+  notes      String?
+  createdAt  DateTime         @default(now()) @map("created_at")
+  createdBy  String?          @map("created_by") @db.Char(26)
+  employee   Employee         @relation(fields: [employeeId], references: [id])
+
+  @@unique([employeeId, date])
+  @@index([date])
+  @@map("attendance_records")
+}
+
+model PayrollRun {
+  id            String    @id @db.Char(26)
+  employeeId    String    @map("employee_id") @db.Char(26)
+  periodMonth   String    @map("period_month") // YYYY-MM
+  daysPresent   Int       @map("days_present")
+  daysHalf      Int       @map("days_half")
+  daysLeave     Int       @map("days_leave")
+  daysAbsent    Int       @map("days_absent")
+  grossAmount   Decimal   @map("gross_amount") @db.Decimal(12, 2)
+  bonus         Decimal   @default(0) @db.Decimal(12, 2)
+  deductions    Decimal   @default(0) @db.Decimal(12, 2)
+  netAmount     Decimal   @map("net_amount") @db.Decimal(12, 2)
+  paidOn        DateTime? @map("paid_on") @db.Date
+  paymentMethod String?   @map("payment_method")
+  notes         String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  createdBy     String?   @map("created_by") @db.Char(26)
+  employee      Employee  @relation(fields: [employeeId], references: [id])
+
+  @@unique([employeeId, periodMonth])
+  @@index([periodMonth])
+  @@map("payroll_runs")
+}
