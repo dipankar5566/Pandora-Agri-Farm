@@ -74,3 +74,4 @@ export * from './breeding';
 export * from './inventory';
 export * from './health';
 export * from './ops';
+export * from './search';

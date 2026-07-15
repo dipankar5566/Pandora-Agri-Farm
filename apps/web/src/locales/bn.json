@@ -312,5 +312,12 @@
   "errors.task_not_pending": "এই কাজ ইতিমধ্যে সম্পন্ন বা বাদ।",
   "errors.backup_failed": "ব্যাকআপ ব্যর্থ — লগ দেখুন।",
   "errors.phone_taken": "এই ফোন নম্বর ইতিমধ্যে নিবন্ধিত।",
-  "errors.last_owner": "শেষ সক্রিয় মালিককে নিষ্ক্রিয় করা যায় না।"
+  "errors.last_owner": "শেষ সক্রিয় মালিককে নিষ্ক্রিয় করা যায় না।",
+  "search.placeholder": "ছাগল, ওষুধ, যা খুশি খুঁজুন…",
+  "search.noResults": "কিছু পাওয়া যায়নি।",
+  "search.animals": "ছাগল",
+  "search.items": "সামগ্রী",
+  "search.suppliers": "সরবরাহকারী",
+  "search.tasks": "কাজ",
+  "search.ledger": "হিসাব"
 }

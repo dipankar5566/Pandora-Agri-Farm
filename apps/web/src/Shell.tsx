@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { api } from './api';
 import type { Me } from './App';
+import GlobalSearch from './components/GlobalSearch';
 
 const DRAWER = 210;
 
@@ -72,9 +73,12 @@ export default function Shell(props: {
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <AppBar position="fixed" sx={{ zIndex: (th) => th.zIndex.drawer + 1 }}>
         <Toolbar variant="dense">
-          <Typography variant="h6" sx={{ flexGrow: 1, fontSize: 17 }}>
-            🐐 {t('app.title')}
+          <Typography variant="h6" sx={{ fontSize: 17, whiteSpace: 'nowrap' }}>
+            🐐 {desktop ? t('app.title') : ''}
           </Typography>
+          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', px: 1 }}>
+            <GlobalSearch />
+          </Box>
           <IconButton color="inherit" onClick={switchLocale} aria-label="language">
             <Typography fontWeight={700} fontSize={13}>{i18n.language === 'en' ? 'বাং' : 'EN'}</Typography>
           </IconButton>

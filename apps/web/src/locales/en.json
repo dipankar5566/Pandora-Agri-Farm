@@ -312,5 +312,12 @@
   "errors.task_not_pending": "This task is already done or skipped.",
   "errors.backup_failed": "Backup failed — check the logs.",
   "errors.phone_taken": "This phone number is already registered.",
-  "errors.last_owner": "The last active owner cannot be deactivated."
+  "errors.last_owner": "The last active owner cannot be deactivated.",
+  "search.placeholder": "Search goats, medicines, anything…",
+  "search.noResults": "No matches.",
+  "search.animals": "Animals",
+  "search.items": "Items",
+  "search.suppliers": "Suppliers",
+  "search.tasks": "Tasks",
+  "search.ledger": "Finance"
 }
