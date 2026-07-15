@@ -10,6 +10,9 @@ import { AuthService } from './modules/auth/auth.service';
 import { BreedingController } from './modules/breeding/breeding.controller';
 import { BreedingService } from './modules/breeding/breeding.service';
 import { FilesService } from './modules/herd/files.service';
+import { HealthController } from './modules/health/health.controller';
+import { HealthService } from './modules/health/health.service';
+import { ProtocolsService } from './modules/health/protocols.service';
 import { InventoryController } from './modules/inventory/inventory.controller';
 import { InventoryService } from './modules/inventory/inventory.service';
 import { HerdController } from './modules/herd/herd.controller';
@@ -26,7 +29,7 @@ import { UsersService } from './modules/users/users.service';
  * actual domain rules.
  */
 @Module({
-  controllers: [AuthController, UsersController, RolesController, SettingsController, HerdController, BreedingController, InventoryController],
+  controllers: [AuthController, UsersController, RolesController, SettingsController, HerdController, BreedingController, InventoryController, HealthController],
   providers: [
     PrismaService,
     AuditService,
@@ -37,6 +40,8 @@ import { UsersService } from './modules/users/users.service';
     LookupsService,
     BreedingService,
     InventoryService,
+    HealthService,
+    ProtocolsService,
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_FILTER, useClass: AppExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: IdempotencyInterceptor },

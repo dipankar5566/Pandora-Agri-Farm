@@ -11,6 +11,7 @@ import Breeding from './pages/Breeding';
 import Inventory from './pages/Inventory';
 import BulkIntake from './pages/BulkIntake';
 import Dashboard from './pages/Dashboard';
+import Health from './pages/Health';
 import Herd from './pages/Herd';
 import Register from './pages/Register';
 import { makeTheme } from './theme';
@@ -63,6 +64,7 @@ export default function App() {
             <Route path="/herd/bulk" element={<BulkIntake />} />
             <Route path="/breeding" element={<Breeding />} />
             <Route path="/inventory" element={<Inventory />} />
+            <Route path="/health" element={<Health />} />
             <Route path="/animals/:id" element={<Animal />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

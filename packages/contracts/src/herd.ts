@@ -100,12 +100,17 @@ export const ExitAnimalInput = z.object({
   postMortemDone: z.boolean().optional(),
   disposalMethod: z.enum(['burial', 'rendering', 'other']).optional(),
   notes: z.string().max(1000).optional(),
+  confirmOverride: z.boolean().default(false), // selling during an active withdrawal period
+  overrideReason: z.string().trim().min(5).max(300).optional(),
 }).superRefine((v, ctx) => {
   if ((v.exitType === 'sale' || v.exitType === 'cull_sale') && v.price === undefined) {
     ctx.addIssue({ code: 'custom', message: 'errors.sale_price_required', path: ['price'] });
   }
   if (v.exitType === 'death' && !v.causeCategory) {
     ctx.addIssue({ code: 'custom', message: 'errors.death_cause_required', path: ['causeCategory'] });
+  }
+  if (v.confirmOverride && !v.overrideReason) {
+    ctx.addIssue({ code: 'custom', message: 'errors.override_reason_required', path: ['overrideReason'] });
   }
 });
 export type ExitAnimalInput = z.infer<typeof ExitAnimalInput>;

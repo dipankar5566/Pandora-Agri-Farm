@@ -111,6 +111,28 @@ async function main(): Promise<void> {
     update: {},
   });
 
+  // Health protocols — Phase 1 §5.3 India-standard schedule, farm-editable.
+  const PROTOCOLS: Array<{
+    name: string; nameBn: string; type: 'vaccination' | 'deworming';
+    firstDoseAgeDays: number; boosterAfterDays?: number; repeatIntervalDays: number;
+    dosePerKg?: number; doseFixed?: number; doseUnit?: string; appliesTo?: 'all' | 'kid' | 'adult';
+  }> = [
+    { name: 'PPR', nameBn: 'পিপিআর', type: 'vaccination', firstDoseAgeDays: 120, repeatIntervalDays: 1095, doseFixed: 1, doseUnit: 'dose' },
+    { name: 'ET (Enterotoxaemia)', nameBn: 'ইটি', type: 'vaccination', firstDoseAgeDays: 120, boosterAfterDays: 21, repeatIntervalDays: 365, doseFixed: 1, doseUnit: 'dose' },
+    { name: 'HS', nameBn: 'এইচএস', type: 'vaccination', firstDoseAgeDays: 180, repeatIntervalDays: 365, doseFixed: 1, doseUnit: 'dose' },
+    { name: 'FMD', nameBn: 'এফএমডি', type: 'vaccination', firstDoseAgeDays: 120, repeatIntervalDays: 182, doseFixed: 1, doseUnit: 'dose' },
+    { name: 'Goat Pox', nameBn: 'গোট পক্স', type: 'vaccination', firstDoseAgeDays: 90, repeatIntervalDays: 365, doseFixed: 1, doseUnit: 'dose' },
+    { name: 'Deworming (quarterly)', nameBn: 'কৃমিনাশক (ত্রৈমাসিক)', type: 'deworming', firstDoseAgeDays: 60, repeatIntervalDays: 90, dosePerKg: 0.2, doseUnit: 'ml' },
+  ];
+  for (const p of PROTOCOLS) {
+    await prisma.healthProtocol.upsert({
+      where: { name: p.name },
+      create: { id: ulid(), ...p },
+      update: {}, // never overwrite farm edits
+    });
+  }
+  console.log('✓ health protocols');
+
   const ownerPhone = process.env.SEED_OWNER_PHONE ?? '9999999999';
   const ownerPassword = process.env.SEED_OWNER_PASSWORD;
   const existing = await prisma.user.findFirst({ where: { phone: ownerPhone } });

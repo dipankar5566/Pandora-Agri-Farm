@@ -629,3 +629,175 @@ model StockMovement {
   @@index([batchId])
   @@map("stock_movements")
 }
+
+// ── Module 4: Health & Protocols (Phase 3 §6) ───────────────────────
+
+enum CaseSeverity {
+  mild
+  moderate
+  severe
+  critical
+}
+
+enum CaseStatus {
+  open
+  monitoring
+  recovered
+  died
+  referred
+}
+
+enum TreatmentRoute {
+  oral
+  sc
+  im
+  iv
+  topical
+  intranasal
+  other
+}
+
+enum ProtocolType {
+  vaccination
+  deworming
+  dipping
+  other
+}
+
+enum ProtocolAppliesTo {
+  all
+  female
+  male
+  kid
+  adult
+  pregnant
+}
+
+enum DueStatus {
+  pending
+  done
+  skipped
+}
+
+model HealthCase {
+  id                   String       @id @db.Char(26)
+  animalId             String       @map("animal_id") @db.Char(26)
+  openedAt             DateTime     @map("opened_at")
+  symptoms             String
+  provisionalDiagnosis String?      @map("provisional_diagnosis")
+  finalDiagnosis       String?      @map("final_diagnosis")
+  severity             CaseSeverity
+  vetName              String?      @map("vet_name")
+  isIsolated           Boolean      @default(false) @map("is_isolated")
+  isolationPenId       String?      @map("isolation_pen_id") @db.Char(26)
+  status               CaseStatus   @default(open)
+  closedAt             DateTime?    @map("closed_at")
+  outcomeNotes         String?      @map("outcome_notes")
+  createdAt            DateTime     @default(now()) @map("created_at")
+  createdBy            String?      @map("created_by") @db.Char(26)
+  updatedAt            DateTime     @updatedAt @map("updated_at")
+  updatedBy            String?      @map("updated_by") @db.Char(26)
+  vitals               CaseVital[]
+  treatments           Treatment[]
+
+  @@index([animalId, openedAt(sort: Desc)])
+  @@index([status])
+  @@map("health_cases")
+}
+
+model CaseVital {
+  id             String     @id @db.Char(26)
+  caseId         String     @map("case_id") @db.Char(26)
+  recordedAt     DateTime   @map("recorded_at")
+  temperatureC   Decimal?   @map("temperature_c") @db.Decimal(4, 2)
+  pulseBpm       Int?       @map("pulse_bpm")
+  respirationRpm Int?       @map("respiration_rpm")
+  notes          String?
+  recordedBy     String?    @map("recorded_by") @db.Char(26)
+  case           HealthCase @relation(fields: [caseId], references: [id])
+
+  @@map("case_vitals")
+}
+
+model Treatment {
+  id                  String         @id @db.Char(26)
+  animalId            String         @map("animal_id") @db.Char(26)
+  caseId              String?        @map("case_id") @db.Char(26)
+  treatedAt           DateTime       @map("treated_at")
+  itemId              String         @map("item_id") @db.Char(26)
+  batchId             String?        @map("batch_id") @db.Char(26)
+  doseAmount          Decimal        @map("dose_amount") @db.Decimal(8, 3)
+  doseUnit            String         @map("dose_unit")
+  route               TreatmentRoute
+  weightAtTreatmentKg Decimal?       @map("weight_at_treatment_kg") @db.Decimal(6, 3)
+  withdrawalUntil     DateTime?      @map("withdrawal_until") @db.Date
+  givenBy             String?        @map("given_by") @db.Char(26)
+  prescribedBy        String?        @map("prescribed_by")
+  notes               String?
+  createdAt           DateTime       @default(now()) @map("created_at")
+  case                HealthCase?    @relation(fields: [caseId], references: [id])
+
+  @@index([animalId, treatedAt(sort: Desc)])
+  @@map("treatments")
+}
+
+model HealthProtocol {
+  id                 String            @id @db.Char(26)
+  type               ProtocolType
+  name               String            @unique
+  nameBn             String?           @map("name_bn")
+  defaultItemId      String?           @map("default_item_id") @db.Char(26)
+  firstDoseAgeDays   Int?              @map("first_dose_age_days")
+  boosterAfterDays   Int?              @map("booster_after_days")
+  repeatIntervalDays Int?              @map("repeat_interval_days")
+  dosePerKg          Decimal?          @map("dose_per_kg") @db.Decimal(8, 4)
+  doseFixed          Decimal?          @map("dose_fixed") @db.Decimal(8, 3)
+  doseUnit           String?           @map("dose_unit")
+  appliesTo          ProtocolAppliesTo @default(all) @map("applies_to")
+  isActive           Boolean           @default(true) @map("is_active")
+  notes              String?
+  dues               ProtocolDue[]
+  administrations    ProtocolAdministration[]
+
+  @@map("health_protocols")
+}
+
+model ProtocolDue {
+  id            String         @id @db.Char(26)
+  protocolId    String         @map("protocol_id") @db.Char(26)
+  animalId      String         @map("animal_id") @db.Char(26)
+  dueDate       DateTime       @map("due_date") @db.Date
+  status        DueStatus      @default(pending)
+  fulfilledById String?        @map("fulfilled_by_id") @db.Char(26)
+  skipReason    String?        @map("skip_reason")
+  protocol      HealthProtocol @relation(fields: [protocolId], references: [id])
+
+  @@unique([protocolId, animalId, dueDate])
+  @@index([status, dueDate])
+  @@index([animalId])
+  @@map("protocol_dues")
+}
+
+model ProtocolAdministration {
+  id                        String         @id @db.Char(26)
+  protocolId                String         @map("protocol_id") @db.Char(26)
+  animalId                  String         @map("animal_id") @db.Char(26)
+  givenOn                   DateTime       @map("given_on") @db.Date
+  itemId                    String?        @map("item_id") @db.Char(26)
+  batchId                   String?        @map("batch_id") @db.Char(26)
+  doseAmount                Decimal?       @map("dose_amount") @db.Decimal(8, 3)
+  doseUnit                  String?        @map("dose_unit")
+  weightAtAdminKg           Decimal?       @map("weight_at_admin_kg") @db.Decimal(6, 3)
+  anthelminticClassSnapshot String?        @map("anthelmintic_class_snapshot")
+  withdrawalUntil           DateTime?      @map("withdrawal_until") @db.Date
+  givenBy                   String?        @map("given_by") @db.Char(26)
+  vetName                   String?        @map("vet_name")
+  nextDueDate               DateTime?      @map("next_due_date") @db.Date
+  notes                     String?
+  createdAt                 DateTime       @default(now()) @map("created_at")
+  protocol                  HealthProtocol @relation(fields: [protocolId], references: [id])
+
+  @@index([animalId, givenOn(sort: Desc)])
+  @@index([protocolId, animalId, givenOn(sort: Desc)])
+  @@map("protocol_administrations")
+}

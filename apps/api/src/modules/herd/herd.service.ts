@@ -109,7 +109,27 @@ export class HerdService {
       },
     });
     if (!a) throw AppError.notFound('animal');
-    return this.view(a);
+    const withdrawalUntil = await this.activeWithdrawalUntil(id);
+    return { ...this.view(a), withdrawalUntil };
+  }
+
+  /** Latest future withdrawal end across treatments and protocol administrations. */
+  private async activeWithdrawalUntil(animalId: string): Promise<Date | null> {
+    const now = new Date();
+    const [t, p] = await Promise.all([
+      this.prisma.treatment.findFirst({
+        where: { animalId, withdrawalUntil: { gte: now } },
+        orderBy: { withdrawalUntil: 'desc' },
+        select: { withdrawalUntil: true },
+      }),
+      this.prisma.protocolAdministration.findFirst({
+        where: { animalId, withdrawalUntil: { gte: now } },
+        orderBy: { withdrawalUntil: 'desc' },
+        select: { withdrawalUntil: true },
+      }),
+    ]);
+    const dates = [t?.withdrawalUntil, p?.withdrawalUntil].filter((d): d is Date => !!d);
+    return dates.length ? new Date(Math.max(...dates.map((d) => d.getTime()))) : null;
   }
 
   async create(input: CreateAnimalInput, actor: string) {
@@ -251,6 +271,16 @@ export class HerdService {
     const animal = await this.prisma.animal.findFirst({ where: { id, deletedAt: null }, include: { exit: true } });
     if (!animal) throw AppError.notFound('animal');
     if (animal.exit || animal.status !== 'active') throw AppError.conflict('ANIMAL_ALREADY_EXITED');
+    // Meat-safety guard: no sale while a medicine withdrawal period is active.
+    if (input.exitType === 'sale' || input.exitType === 'cull_sale') {
+      const withdrawal = await this.activeWithdrawalUntil(id);
+      if (withdrawal && !input.confirmOverride) {
+        throw new AppError(422, 'RULE_OVERRIDE_REQUIRED', 'errors.rule_override_required', {
+          warnings: ['WITHDRAWAL_ACTIVE'],
+          withdrawalUntil: withdrawal.toISOString().slice(0, 10),
+        });
+      }
+    }
     const statusByType = { sale: 'sold', cull_sale: 'culled', death: 'died', disposal: 'disposed', lost: 'lost' } as const;
     return this.prisma.$transaction(async (tx) => {
       const exit = await tx.animalExit.create({
