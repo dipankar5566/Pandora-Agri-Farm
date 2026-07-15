@@ -16,6 +16,7 @@ import Finance from './pages/Finance';
 import Health from './pages/Health';
 import Herd from './pages/Herd';
 import Register from './pages/Register';
+import Purchases from './pages/Purchases';
 import Sales from './pages/Sales';
 import Settings from './pages/Settings';
 import Tasks from './pages/Tasks';
@@ -73,6 +74,7 @@ export default function App() {
             <Route path="/feed" element={<Feed />} />
             <Route path="/finance" element={<Finance />} />
             <Route path="/sales" element={<Sales />} />
+            <Route path="/purchases" element={<Purchases />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/settings" element={<Settings me={me.data} />} />
             <Route path="/animals/:id" element={<Animal />} />

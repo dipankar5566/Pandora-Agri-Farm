@@ -10,6 +10,7 @@ import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import MenuIcon from '@mui/icons-material/Menu';
 import PetsIcon from '@mui/icons-material/Pets';
 import SettingsIcon from '@mui/icons-material/Settings';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import {
@@ -50,6 +51,7 @@ export default function Shell(props: {
     { path: '/inventory', label: t('nav.inventory'), icon: <Inventory2Icon /> },
     { path: '/feed', label: t('nav.feed'), icon: <GrassIcon /> },
     { path: '/sales', label: t('nav.sales'), icon: <StorefrontIcon /> },
+    { path: '/purchases', label: t('nav.purchases'), icon: <ShoppingCartIcon /> },
     { path: '/finance', label: t('nav.finance'), icon: <CurrencyRupeeIcon /> },
     { path: '/tasks', label: t('nav.tasks'), icon: <TaskAltIcon /> },
     { path: '/settings', label: t('nav.settings'), icon: <SettingsIcon /> },

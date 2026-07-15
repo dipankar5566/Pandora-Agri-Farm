@@ -360,5 +360,16 @@
   "errors.customer_or_buyer_required": "ক্রেতা বাছুন বা নগদ ক্রেতার নাম লিখুন।",
   "errors.animal_required": "এই লাইনের ছাগল বাছুন।",
   "errors.description_required": "কী বিক্রি হচ্ছে লিখুন।",
-  "errors.invoice_or_customer_required": "চালান বা ক্রেতা বাছুন।"
+  "errors.invoice_or_customer_required": "চালান বা ক্রেতা বাছুন।",
+  "nav.purchases": "ক্রয়",
+  "pur.newBill": "নতুন ক্রয়",
+  "pur.supplierBillNo": "সরবরাহকারীর বিল নং",
+  "pur.otherCharges": "পরিবহন/অন্যান্য (₹)",
+  "pur.cancelBill": "বিল বাতিল",
+  "pur.totalOutstanding": "দেনা: {{v}}",
+  "pur.empty": "এখনো কোনো ক্রয় নেই — এখানে কিনলে মজুতের ব্যাচও তৈরি হয়।",
+  "errors.bill_cancelled": "এই বিল বাতিল।",
+  "errors.bill_has_payments": "পেমেন্টসহ বিল বাতিল করা যায় না।",
+  "errors.bill_stock_used": "এই বিলের কিছু মজুত ইতিমধ্যে ব্যবহৃত — বাতিল করা যাবে না।",
+  "errors.bill_or_supplier_required": "বিল বা সরবরাহকারী বাছুন।"
 }

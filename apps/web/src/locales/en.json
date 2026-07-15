@@ -360,5 +360,16 @@
   "errors.customer_or_buyer_required": "Pick a customer or enter a walk-in buyer name.",
   "errors.animal_required": "Pick the goat for this line.",
   "errors.description_required": "Describe what is being sold.",
-  "errors.invoice_or_customer_required": "Pick an invoice or a customer."
+  "errors.invoice_or_customer_required": "Pick an invoice or a customer.",
+  "nav.purchases": "Purchases",
+  "pur.newBill": "New purchase",
+  "pur.supplierBillNo": "Supplier bill #",
+  "pur.otherCharges": "Freight/other (₹)",
+  "pur.cancelBill": "Cancel bill",
+  "pur.totalOutstanding": "Payable: {{v}}",
+  "pur.empty": "No purchases yet — buying stock here also fills your inventory batches.",
+  "errors.bill_cancelled": "This bill is cancelled.",
+  "errors.bill_has_payments": "A bill with payments cannot be cancelled.",
+  "errors.bill_stock_used": "Some of this bill’s stock is already used — it cannot be cancelled.",
+  "errors.bill_or_supplier_required": "Pick a bill or a supplier."
 }
