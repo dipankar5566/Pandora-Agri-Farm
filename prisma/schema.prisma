@@ -371,3 +371,134 @@ model Attachment {
   @@index([entityType, entityId])
   @@map("attachments")
 }
+
+// ── Module 2: Breeding (Phase 3 §5) ─────────────────────────────────
+
+enum ServiceType {
+  natural
+  ai
+}
+
+enum DiagnosisMethod {
+  ultrasound
+  palpation
+  non_return
+  ballottement
+  other
+}
+
+enum DiagnosisResult {
+  pregnant
+  open
+  inconclusive
+}
+
+enum PregnancyStatus {
+  ongoing
+  kidded
+  aborted
+  false_pregnancy
+}
+
+model HeatRecord {
+  id         String   @id @db.Char(26)
+  doeId      String   @map("doe_id") @db.Char(26)
+  detectedOn DateTime @map("detected_on") @db.Date
+  signs      String?
+  notes      String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  createdBy  String?  @map("created_by") @db.Char(26)
+
+  @@index([doeId, detectedOn(sort: Desc)])
+  @@map("heat_records")
+}
+
+model Service {
+  id                 String      @id @db.Char(26)
+  doeId              String      @map("doe_id") @db.Char(26)
+  serviceType        ServiceType @map("service_type")
+  buckId             String?     @map("buck_id") @db.Char(26)
+  semenBatch         String?     @map("semen_batch")
+  semenSource        String?     @map("semen_source")
+  technician         String?
+  serviceDate        DateTime    @map("service_date") @db.Date
+  heatRecordId       String?     @map("heat_record_id") @db.Char(26)
+  overrideReason     String?     @map("override_reason")
+  inbreedingFlag     Boolean     @default(false) @map("inbreeding_flag")
+  notes              String?
+  createdAt          DateTime    @default(now()) @map("created_at")
+  createdBy          String?     @map("created_by") @db.Char(26)
+  diagnoses          PregnancyDiagnosis[]
+  pregnancy          Pregnancy?
+
+  @@index([doeId, serviceDate(sort: Desc)])
+  @@index([buckId, serviceDate(sort: Desc)])
+  @@map("services")
+}
+
+model PregnancyDiagnosis {
+  id          String          @id @db.Char(26)
+  serviceId   String          @map("service_id") @db.Char(26)
+  diagnosedOn DateTime        @map("diagnosed_on") @db.Date
+  method      DiagnosisMethod
+  result      DiagnosisResult
+  notes       String?
+  createdAt   DateTime        @default(now()) @map("created_at")
+  createdBy   String?         @map("created_by") @db.Char(26)
+  service     Service         @relation(fields: [serviceId], references: [id])
+
+  @@map("pregnancy_diagnoses")
+}
+
+model Pregnancy {
+  id                  String          @id @db.Char(26)
+  doeId               String          @map("doe_id") @db.Char(26)
+  serviceId           String          @unique @map("service_id") @db.Char(26)
+  confirmedOn         DateTime        @map("confirmed_on") @db.Date
+  expectedKiddingDate DateTime        @map("expected_kidding_date") @db.Date
+  status              PregnancyStatus @default(ongoing)
+  abortionDate        DateTime?       @map("abortion_date") @db.Date
+  abortionReason      String?         @map("abortion_reason")
+  notes               String?
+  createdAt           DateTime        @default(now()) @map("created_at")
+  createdBy           String?         @map("created_by") @db.Char(26)
+  service             Service         @relation(fields: [serviceId], references: [id])
+  kidding             Kidding?
+
+  @@index([status, expectedKiddingDate])
+  @@index([doeId])
+  @@map("pregnancies")
+}
+
+model Kidding {
+  id                String     @id @db.Char(26)
+  pregnancyId       String     @unique @map("pregnancy_id") @db.Char(26)
+  kiddingDate       DateTime   @map("kidding_date") @db.Date
+  assisted          Boolean    @default(false)
+  complication      String     @default("none")
+  complicationNotes String?    @map("complication_notes")
+  totalBorn         Int        @map("total_born")
+  bornAlive         Int        @map("born_alive")
+  attendedBy        String?    @map("attended_by")
+  notes             String?
+  createdAt         DateTime   @default(now()) @map("created_at")
+  createdBy         String?    @map("created_by") @db.Char(26)
+  pregnancy         Pregnancy  @relation(fields: [pregnancyId], references: [id])
+  kidRecords        KidRecord[]
+
+  @@map("kiddings")
+}
+
+model KidRecord {
+  animalId         String    @id @map("animal_id") @db.Char(26)
+  kiddingId        String    @map("kidding_id") @db.Char(26)
+  birthOrder       Int       @map("birth_order")
+  birthWeightKg    Decimal?  @map("birth_weight_kg") @db.Decimal(5, 3)
+  colostrumWithin1h Boolean? @map("colostrum_within_1h")
+  weanedOn         DateTime? @map("weaned_on") @db.Date
+  weaningWeightKg  Decimal?  @map("weaning_weight_kg") @db.Decimal(6, 3)
+  kidding          Kidding   @relation(fields: [kiddingId], references: [id])
+
+  @@index([kiddingId])
+  @@map("kid_records")
+}

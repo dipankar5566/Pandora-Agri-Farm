@@ -70,3 +70,4 @@ export type UpdateFarmInput = z.infer<typeof UpdateFarmInput>;
 
 export const SettingValue = z.object({ value: z.unknown() });
 export * from './herd';
+export * from './breeding';

@@ -48,12 +48,15 @@ export class AppExceptionFilter implements ExceptionFilter {
       });
       return;
     }
-    if (exception instanceof ZodError) {
+    // Structural check, not instanceof: npm may install two zod copies
+    // (contracts pkg vs api), and instanceof fails across copies.
+    if (exception instanceof ZodError || (exception as ZodError)?.name === 'ZodError') {
+      const zerr = exception as ZodError;
       res.status(400).json({
         error: {
           code: 'VALIDATION_FAILED',
           messageCode: 'errors.validation_failed',
-          fields: exception.issues.map((i) => ({
+          fields: zerr.issues.map((i) => ({
             field: i.path.join('.'),
             messageCode: i.message.startsWith('errors.') ? i.message : 'errors.invalid_value',
           })),

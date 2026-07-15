@@ -7,6 +7,7 @@ import { api } from './api';
 import Login from './pages/Login';
 import Shell from './Shell';
 import Animal from './pages/Animal';
+import Breeding from './pages/Breeding';
 import BulkIntake from './pages/BulkIntake';
 import Dashboard from './pages/Dashboard';
 import Herd from './pages/Herd';
@@ -59,6 +60,7 @@ export default function App() {
             <Route path="/herd" element={<Herd />} />
             <Route path="/herd/register" element={<Register />} />
             <Route path="/herd/bulk" element={<BulkIntake />} />
+            <Route path="/breeding" element={<Breeding />} />
             <Route path="/animals/:id" element={<Animal />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
