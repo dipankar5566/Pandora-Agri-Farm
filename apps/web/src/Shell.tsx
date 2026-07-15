@@ -4,6 +4,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import GrassIcon from '@mui/icons-material/Grass';
 import GroupsIcon from '@mui/icons-material/Groups';
+import AgricultureIcon from '@mui/icons-material/Agriculture';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -51,6 +52,7 @@ export default function Shell(props: {
     { path: '/health', label: t('nav.health'), icon: <MedicalServicesIcon /> },
     { path: '/inventory', label: t('nav.inventory'), icon: <Inventory2Icon /> },
     { path: '/feed', label: t('nav.feed'), icon: <GrassIcon /> },
+    { path: '/fodder', label: t('nav.fodder'), icon: <AgricultureIcon /> },
     { path: '/sales', label: t('nav.sales'), icon: <StorefrontIcon /> },
     { path: '/purchases', label: t('nav.purchases'), icon: <ShoppingCartIcon /> },
     { path: '/finance', label: t('nav.finance'), icon: <CurrencyRupeeIcon /> },

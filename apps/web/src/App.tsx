@@ -13,6 +13,7 @@ import BulkIntake from './pages/BulkIntake';
 import Dashboard from './pages/Dashboard';
 import Feed from './pages/Feed';
 import Finance from './pages/Finance';
+import Fodder from './pages/Fodder';
 import Health from './pages/Health';
 import Herd from './pages/Herd';
 import Register from './pages/Register';
@@ -73,6 +74,7 @@ export default function App() {
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/health" element={<Health />} />
             <Route path="/feed" element={<Feed />} />
+            <Route path="/fodder" element={<Fodder />} />
             <Route path="/finance" element={<Finance />} />
             <Route path="/sales" element={<Sales />} />
             <Route path="/purchases" element={<Purchases />} />

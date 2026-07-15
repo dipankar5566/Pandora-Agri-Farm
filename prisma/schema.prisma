@@ -531,6 +531,7 @@ enum ItemUnit {
 }
 
 enum MovementType {
+  production
   opening
   purchase
   consumption
@@ -1134,4 +1135,75 @@ model PayrollRun {
   @@unique([employeeId, periodMonth])
   @@index([periodMonth])
   @@map("payroll_runs")
+}
+
+// ── R2 Module 4: Fodder (plots → crops → harvests → feed stock) ─────
+
+enum CropStatus {
+  growing
+  harvested
+  failed
+}
+
+enum FodderForm {
+  green
+  hay
+  silage
+}
+
+model FodderPlot {
+  id          String    @id @db.Char(26)
+  name        String
+  block       String? // land-map block: A / B (Plot 2308, Mouza Tantipara)
+  areaDecimal Decimal?  @map("area_decimal") @db.Decimal(8, 2)
+  notes       String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  createdBy   String?   @map("created_by") @db.Char(26)
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  updatedBy   String?   @map("updated_by") @db.Char(26)
+  deletedAt   DateTime? @map("deleted_at")
+  deletedBy   String?   @map("deleted_by") @db.Char(26)
+  crops       FodderCrop[]
+
+  @@unique([name])
+  @@map("fodder_plots")
+}
+
+model FodderCrop {
+  id                String     @id @db.Char(26)
+  plotId            String     @map("plot_id") @db.Char(26)
+  cropName          String     @map("crop_name") // Napier, Maize, Berseem…
+  variety           String?
+  sownOn            DateTime   @map("sown_on") @db.Date
+  expectedHarvestOn DateTime?  @map("expected_harvest_on") @db.Date
+  status            CropStatus @default(growing)
+  closedOn          DateTime?  @map("closed_on") @db.Date
+  failReason        String?    @map("fail_reason")
+  costTotal         Decimal?   @map("cost_total") @db.Decimal(12, 2) // seeds+inputs, user-entered
+  notes             String? // weather notes live here and on harvests
+  createdAt         DateTime   @default(now()) @map("created_at")
+  createdBy         String?    @map("created_by") @db.Char(26)
+  plot              FodderPlot @relation(fields: [plotId], references: [id])
+  harvests          FodderHarvest[]
+
+  @@index([status])
+  @@map("fodder_crops")
+}
+
+model FodderHarvest {
+  id           String     @id @db.Char(26)
+  cropId       String     @map("crop_id") @db.Char(26)
+  harvestedOn  DateTime   @map("harvested_on") @db.Date
+  form         FodderForm
+  qtyKg        Decimal    @map("qty_kg") @db.Decimal(10, 3)
+  dryMatterPct Decimal?   @map("dry_matter_pct") @db.Decimal(4, 1)
+  itemId       String     @map("item_id") @db.Char(26) // feed item the yield lands in
+  batchId      String     @map("batch_id") @db.Char(26)
+  notes        String?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  createdBy    String?    @map("created_by") @db.Char(26)
+  crop         FodderCrop @relation(fields: [cropId], references: [id])
+
+  @@index([cropId])
+  @@map("fodder_harvests")
 }

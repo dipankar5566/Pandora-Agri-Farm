@@ -46,6 +46,21 @@ describe('employees module', () => {
     server = app.getHttpServer();
     const login = await request(server).post('/api/v1/auth/login').send({ phone: OWNER_PHONE, password: OWNER_PASSWORD });
     cookie = login.headers['set-cookie'][0].split(';')[0];
+
+    // Self-heal: an interrupted previous run may have left fixtures behind,
+    // which would corrupt the payroll math assertions. Clean before starting.
+    const stale = await prisma.employee.findMany({
+      where: { fullName: { in: ['Test Rakhal', 'Test Daily Hand'] } },
+      select: { id: true },
+    });
+    if (stale.length) {
+      const staleIds = stale.map((s) => s.id);
+      const staleRuns = await prisma.payrollRun.findMany({ where: { employeeId: { in: staleIds } } });
+      await prisma.ledgerEntry.deleteMany({ where: { refType: 'payroll_run', refId: { in: staleRuns.map((r) => r.id) } } });
+      await prisma.payrollRun.deleteMany({ where: { employeeId: { in: staleIds } } });
+      await prisma.attendanceRecord.deleteMany({ where: { employeeId: { in: staleIds } } });
+      await prisma.employee.deleteMany({ where: { id: { in: staleIds } } });
+    }
   });
 
   afterAll(async () => {

@@ -78,3 +78,4 @@ export * from './search';
 export * from './sales';
 export * from './purchases';
 export * from './employees';
+export * from './fodder';
