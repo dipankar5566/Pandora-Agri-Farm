@@ -1,0 +1,282 @@
+<title>Pandora ERP — R1 UI Mockups</title>
+<style>
+  :root{
+    --bg:#FAFAF7; --surface:#FFFFFF; --surface2:#F1F0EA; --ink:#21261F;
+    --muted:#6B7265; --line:#E3E2D9;
+    --accent:#2E6B34; --on-accent:#FFFFFF; --accent-soft:#E4EFE2;
+    --ochre:#B8862B; --ochre-soft:#F4EBD7;
+    --ok:#2E7D46; --ok-soft:#E1F0E4; --warn:#C77E1F; --warn-soft:#F7ECD9;
+    --crit:#B3402F; --crit-soft:#F7E2DE; --info:#3A6EA5; --info-soft:#E2ECF6;
+    --shadow:0 1px 3px rgba(30,40,25,.10),0 4px 14px rgba(30,40,25,.06);
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --bg:#131712; --surface:#1C211B; --surface2:#232921; --ink:#E8EAE3;
+    --muted:#9AA294; --line:#2E352C;
+    --accent:#7FD48A; --on-accent:#10240F; --accent-soft:#24341F;
+    --ochre:#D9A94A; --ochre-soft:#332A17;
+    --ok:#6FC98A; --ok-soft:#1E2F22; --warn:#E0A050; --warn-soft:#332818;
+    --crit:#E28273; --crit-soft:#331E1A; --info:#8AB4DE; --info-soft:#1B2837;
+    --shadow:0 1px 3px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3);
+  }}
+  :root[data-theme="dark"]{
+    --bg:#131712; --surface:#1C211B; --surface2:#232921; --ink:#E8EAE3;
+    --muted:#9AA294; --line:#2E352C;
+    --accent:#7FD48A; --on-accent:#10240F; --accent-soft:#24341F;
+    --ochre:#D9A94A; --ochre-soft:#332A17;
+    --ok:#6FC98A; --ok-soft:#1E2F22; --warn:#E0A050; --warn-soft:#332818;
+    --crit:#E28273; --crit-soft:#331E1A; --info:#8AB4DE; --info-soft:#1B2837;
+    --shadow:0 1px 3px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3);
+  }
+  :root[data-theme="light"]{
+    --bg:#FAFAF7; --surface:#FFFFFF; --surface2:#F1F0EA; --ink:#21261F;
+    --muted:#6B7265; --line:#E3E2D9;
+    --accent:#2E6B34; --on-accent:#FFFFFF; --accent-soft:#E4EFE2;
+    --ochre:#B8862B; --ochre-soft:#F4EBD7;
+    --ok:#2E7D46; --ok-soft:#E1F0E4; --warn:#C77E1F; --warn-soft:#F7ECD9;
+    --crit:#B3402F; --crit-soft:#F7E2DE; --info:#3A6EA5; --info-soft:#E2ECF6;
+    --shadow:0 1px 3px rgba(30,40,25,.10),0 4px 14px rgba(30,40,25,.06);
+  }
+  body{background:var(--bg);color:var(--ink);
+    font:16px/1.55 -apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Bengali","Bangla MN",sans-serif;
+    margin:0;padding:clamp(16px,4vw,48px);}
+  .wrap{max-width:1060px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
+  h1{font-size:clamp(22px,3.4vw,30px);font-weight:700;letter-spacing:-.01em;margin:0;text-wrap:balance}
+  h2{font-size:13px;font-weight:650;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+  .sub{color:var(--muted);margin:6px 0 0;max-width:64ch}
+  /* palette strip */
+  .swatches{display:flex;flex-wrap:wrap;gap:10px}
+  .sw{flex:1 1 130px;border-radius:10px;padding:12px;border:1px solid var(--line)}
+  .sw b{display:block;font-size:13px}.sw span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .chip-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;
+    padding:3px 10px;border-radius:999px}
+  .dot{width:7px;height:7px;border-radius:50%}
+  .p-ok{background:var(--ok-soft);color:var(--ok)}.p-ok .dot{background:var(--ok)}
+  .p-warn{background:var(--warn-soft);color:var(--warn)}.p-warn .dot{background:var(--warn)}
+  .p-crit{background:var(--crit-soft);color:var(--crit)}.p-crit .dot{background:var(--crit)}
+  .p-info{background:var(--info-soft);color:var(--info)}.p-info .dot{background:var(--info)}
+  .p-och{background:var(--ochre-soft);color:var(--ochre)}.p-och .dot{background:var(--ochre)}
+  /* frames */
+  .browser{border:1px solid var(--line);border-radius:12px;background:var(--surface);
+    box-shadow:var(--shadow);overflow:hidden}
+  .browser .bar{display:flex;gap:6px;padding:9px 12px;border-bottom:1px solid var(--line);background:var(--surface2)}
+  .browser .bar i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+  .scroll{overflow-x:auto}
+  .app{display:grid;grid-template-columns:172px 1fr;min-width:780px;font-size:13px}
+  .side{border-right:1px solid var(--line);padding:12px 8px;background:var(--surface)}
+  .side .brand{font-weight:700;padding:4px 10px 10px;font-size:13.5px}
+  .side .grp{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:10px 10px 4px}
+  .side a{display:block;color:var(--ink);text-decoration:none;padding:6px 10px;border-radius:8px;font-size:12.5px}
+  .side a.on{background:var(--accent-soft);color:var(--accent);font-weight:650}
+  .main{background:var(--bg);padding:14px;display:flex;flex-direction:column;gap:12px}
+  .topbar{display:flex;align-items:center;gap:10px}
+  .search{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:999px;
+    padding:7px 14px;color:var(--muted);font-size:12.5px}
+  .iconbtn{background:var(--surface);border:1px solid var(--line);border-radius:999px;
+    padding:6px 11px;font-size:12px;font-weight:600;white-space:nowrap}
+  .fab{background:var(--accent);color:var(--on-accent);border:none;border-radius:999px;
+    padding:7px 14px;font-weight:700;font-size:12.5px}
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .kpi b{font-size:19px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .kpi span{display:block;font-size:11px;color:var(--muted)}
+  .kpi .up{color:var(--ok);font-size:11px;font-weight:650}.kpi .down{color:var(--crit);font-size:11px;font-weight:650}
+  .cols{display:grid;grid-template-columns:1.4fr 1fr;gap:12px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .card h3{margin:0 0 8px;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+  .row{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--line);font-size:12.5px}
+  .row:first-of-type{border-top:none}
+  .row .grow{flex:1;min-width:0}
+  .row small{color:var(--muted);display:block;font-size:11px}
+  .act{margin-left:auto;background:var(--accent-soft);color:var(--accent);border:none;
+    border-radius:8px;padding:4px 10px;font-size:11.5px;font-weight:650;white-space:nowrap}
+  .bars{display:flex;flex-direction:column;gap:8px;font-size:12px}
+  .bars .lab{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+  .bar-track{height:8px;border-radius:99px;background:var(--surface2)}
+  .bar-fill{height:8px;border-radius:99px}
+  /* phones */
+  .phones{display:flex;flex-wrap:wrap;gap:28px;justify-content:center}
+  .phone{width:330px;border:1px solid var(--line);border-radius:26px;background:var(--surface);
+    box-shadow:var(--shadow);overflow:hidden}
+  .phone .notch{height:22px;display:flex;justify-content:center;align-items:center}
+  .phone .notch i{width:70px;height:6px;border-radius:99px;background:var(--line)}
+  .ph-body{padding:12px 14px 8px;display:flex;flex-direction:column;gap:10px;font-size:13px;background:var(--bg)}
+  .ph-head{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px}
+  .ph-head .back{color:var(--muted);font-weight:400}
+  .avatar{width:52px;height:52px;border-radius:12px;background:var(--accent-soft);
+    display:flex;align-items:center;justify-content:center;font-size:26px;flex:none}
+  .meta{font-size:11.5px;color:var(--muted)}
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);font-size:12px;overflow-x:auto}
+  .tabs b{padding:6px 10px;border-bottom:2px solid var(--accent);color:var(--accent);white-space:nowrap}
+  .tabs span{padding:6px 10px;color:var(--muted);white-space:nowrap}
+  .tl{display:flex;flex-direction:column}
+  .tl .ev{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:12.5px}
+  .tl .ev:first-child{border-top:none}
+  .tl .ic{width:26px;height:26px;border-radius:8px;background:var(--surface2);
+    display:flex;align-items:center;justify-content:center;flex:none;font-size:13px}
+  .tl small{color:var(--muted);display:block;font-size:11px}
+  .field{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13px}
+  .field span{display:block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .kidcard{border:1px dashed var(--line);border-radius:10px;padding:9px 12px}
+  .kidcard b{font-size:12.5px}
+  .save{background:var(--accent);color:var(--on-accent);border:none;border-radius:10px;
+    padding:11px;font-weight:700;font-size:13.5px;text-align:center}
+  .hint{font-size:11px;color:var(--muted)}
+  .bottomnav{display:flex;border-top:1px solid var(--line);background:var(--surface);font-size:10.5px;text-align:center}
+  .bottomnav div{flex:1;padding:8px 0;color:var(--muted)}
+  .bottomnav .on{color:var(--accent);font-weight:700}
+  .bottomnav .plus{color:var(--on-accent);background:var(--accent);border-radius:14px;margin:4px;flex:0 0 52px;
+    display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}
+  .offline{background:var(--warn-soft);color:var(--warn);font-size:11.5px;font-weight:650;
+    padding:5px 12px;border-radius:8px}
+  .note{font-size:13px;color:var(--muted);max-width:70ch}
+  figcaption{font-size:12px;color:var(--muted);margin-top:10px;text-align:center}
+  figure{margin:0}
+  @media (max-width:720px){.kpis{grid-template-columns:repeat(3,1fr)}.cols{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Pandora Goat Farm ERP — R1 interface mockups</h1>
+    <p class="sub">Phase 4 companion to <code>docs/Phase-4-UI-Wireframes.md</code>. Material Design 3 tokens tuned for the farm: leaf green primary, hay ochre support, warm neutrals. Toggle this page’s theme to preview dark mode — the app ships both.</p>
+  </header>
+
+  <section>
+    <h2>Palette &amp; status language</h2>
+    <div class="swatches">
+      <div class="sw" style="background:var(--accent);border-color:var(--accent)"><b style="color:var(--on-accent)">Leaf green</b><span style="color:var(--on-accent);opacity:.8">primary · #2E6B34</span></div>
+      <div class="sw" style="background:var(--ochre);border-color:var(--ochre)"><b style="color:#fff">Hay ochre</b><span style="color:#fff;opacity:.85">support · #B8862B</span></div>
+      <div class="sw"><b>Warm ground</b><span>#FAFAF7 / #131712</span></div>
+      <div class="sw" style="background:var(--surface2)"><b>Surface 2</b><span>panels &amp; wells</span></div>
+    </div>
+    <p style="margin:14px 0 8px" class="note">Status never borrows the brand color — semantic pills are their own hues, readable at a glance in the barn:</p>
+    <div class="chip-row">
+      <span class="pill p-ok"><i class="dot"></i>Active · সক্রিয়</span>
+      <span class="pill p-och"><i class="dot"></i>Pregnant · গর্ভবতী</span>
+      <span class="pill p-warn"><i class="dot"></i>Due 3 days</span>
+      <span class="pill p-crit"><i class="dot"></i>Overdue · Isolation</span>
+      <span class="pill p-info"><i class="dot"></i>Heat recheck</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>S2 · Dashboard — desktop</h2>
+    <figure>
+      <div class="browser">
+        <div class="bar"><i></i><i></i><i></i></div>
+        <div class="scroll"><div class="app">
+          <nav class="side">
+            <div class="brand">🐐 Pandora</div>
+            <a class="on">⌂ Dashboard</a>
+            <div class="grp">Herd</div><a>Animals</a><a>Kids</a>
+            <div class="grp">Cycle</div><a>Breeding</a><a>Pregnancy</a>
+            <div class="grp">Care</div><a>Health</a><a>Protocols</a>
+            <div class="grp">Supply</div><a>Inventory</a><a>Feed</a>
+            <div class="grp">Money</div><a>Finance</a><a>Tasks</a><a>Settings</a>
+          </nav>
+          <div class="main">
+            <div class="topbar">
+              <div class="search">🔍 Search goats, medicines, anything… · খুঁজুন</div>
+              <button class="fab">＋ Quick add</button>
+              <span class="iconbtn">🔔 3</span><span class="iconbtn">EN | বাং</span>
+            </div>
+            <div class="kpis">
+              <div class="kpi"><b>87</b><span>Active goats</span><span class="up">▲ 4 this month</span></div>
+              <div class="kpi"><b>12</b><span>Pregnant</span><span class="up">3 due in 30 d</span></div>
+              <div class="kpi"><b>23</b><span>Kids</span><span class="up">▲ 5 born</span></div>
+              <div class="kpi"><b>2.1%</b><span>Mortality 90 d</span><span class="up">under 10% target</span></div>
+              <div class="kpi"><b>46 g</b><span>Avg daily gain</span><span class="up">in breed band</span></div>
+              <div class="kpi"><b style="color:var(--crit)">−28,700</b><span>₹ this month</span><span class="down">▼ feed purchase</span></div>
+            </div>
+            <div class="cols">
+              <div class="card">
+                <h3>Needs attention</h3>
+                <div class="row"><span class="pill p-crit"><i class="dot"></i>Overdue 3 d</span><div class="grow">PPR vaccine — 14 kids<small>Kid pen · protocol PPR primary</small></div><button class="act">Administer</button></div>
+                <div class="row"><span class="pill p-warn"><i class="dot"></i>Due 17 Jul</span><div class="grow">Kidding watch — PGF-0041 “Lakshmi”<small>2nd kidding · watch window ±5 d</small></div><button class="act">Open</button></div>
+                <div class="row"><span class="pill p-warn"><i class="dot"></i>Due 20 Jul</span><div class="grow">Deworming — Pen B, 18 animals<small>Rotate class: last was benzimidazole</small></div><button class="act">Batch…</button></div>
+                <div class="row"><span class="pill p-info"><i class="dot"></i>Recheck</span><div class="grow">3 does — heat recheck day 19<small>Served 26 Jun–1 Jul, no return = likely pregnant</small></div><button class="act">List</button></div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div class="card">
+                  <h3>Alerts</h3>
+                  <div class="row"><span class="pill p-crit"><i class="dot"></i>Backup</span><div class="grow">Last backup 31 h ago<small>Google Drive unreachable — check network</small></div></div>
+                  <div class="row"><span class="pill p-warn"><i class="dot"></i>Stock</span><div class="grow">Ivermectin: 2 doses left<small>Min level 10 · supplier: Suri Agrovet</small></div></div>
+                  <div class="row"><span class="pill p-warn"><i class="dot"></i>Expiry</span><div class="grow">ET vaccine batch 8821<small>Expires 27 Jul · 12 doses remaining</small></div></div>
+                </div>
+                <div class="card">
+                  <h3>This month · ₹</h3>
+                  <div class="bars">
+                    <div><div class="lab"><span>Income</span><b>42,500</b></div><div class="bar-track"><div class="bar-fill" style="width:38%;background:var(--ok)"></div></div></div>
+                    <div><div class="lab"><span>Expense</span><b>71,200</b></div><div class="bar-track"><div class="bar-fill" style="width:64%;background:var(--ochre)"></div></div></div>
+                    <div class="hint">Feed 48% · Medicine 22% · Labour 18% · Other 12%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+      <figcaption>Every “needs attention” row is generated by the protocol/pregnancy engines — the dashboard is the farm’s to-do list, not a poster.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>S4 &amp; S8 · Phone — animal profile and kidding entry</h2>
+    <div class="phones">
+      <figure><div class="phone">
+        <div class="notch"><i></i></div>
+        <div class="ph-body">
+          <div class="ph-head"><span class="back">←</span> PGF-0041 “Lakshmi” <span style="margin-left:auto" class="iconbtn">⌸ QR</span></div>
+          <div style="display:flex;gap:10px;align-items:center">
+            <div class="avatar">🐐</div>
+            <div><div style="font-size:12.5px;font-weight:650">Black Bengal · ♀ · 2y 3m</div>
+              <div class="meta">⚖ 22.4 kg · BCS 3.5 · Pen A-2</div>
+              <div class="meta">Dam PGF-0012 · Sire PGF-0003</div></div>
+          </div>
+          <div class="chip-row">
+            <span class="pill p-ok"><i class="dot"></i>Active</span>
+            <span class="pill p-och"><i class="dot"></i>Due 17 Jul ±5d</span>
+            <span class="pill p-warn"><i class="dot"></i>Withdrawal → 19 Jul</span>
+          </div>
+          <div class="tabs"><b>Timeline</b><span>Health</span><span>Breeding</span><span>Weights</span><span>Money</span></div>
+          <div class="tl">
+            <div class="ev"><div class="ic">💉</div><div>Vaccinated — ET booster, batch 8821<small>14 Jul · by Manager · stock −1 dose</small></div></div>
+            <div class="ev"><div class="ic">⚖</div><div>Weighed — 22.4 kg (+0.6)<small>10 Jul · weekly session, Pen A-2</small></div></div>
+            <div class="ev"><div class="ic">🚚</div><div>Moved — Pen A-1 → A-2<small>02 Jul · kidding preparation</small></div></div>
+            <div class="ev"><div class="ic">♥</div><div>Served — natural, buck PGF-0003<small>19 Feb · expected kidding 17 Jul</small></div></div>
+          </div>
+          <div class="bottomnav"><div>⌂<br>Home</div><div class="on">🐐<br>Herd</div><div class="plus">＋</div><div>☑<br>Tasks</div><div>≡<br>More</div></div>
+        </div>
+      </div><figcaption>Profile header chips are computed live; the timeline is written only by the event bus.</figcaption></figure>
+
+      <figure><div class="phone">
+        <div class="notch"><i></i></div>
+        <div class="ph-body">
+          <div class="offline">⚠ Offline — 1 entry queued · অফলাইন</div>
+          <div class="ph-head"><span class="back">←</span> Record kidding · প্রসব</div>
+          <div class="meta">PGF-0041 “Lakshmi” — due 17 Jul (day 150)</div>
+          <div class="grid2">
+            <div class="field"><span>Date · তারিখ</span>17 Jul 2026</div>
+            <div class="field"><span>Assisted?</span>No</div>
+            <div class="field"><span>Total born</span>3</div>
+            <div class="field"><span>Born alive</span>2 <em class="hint">(stillborn 1)</em></div>
+          </div>
+          <div class="kidcard"><b>Kid 1 · PGF-0088</b>
+            <div class="grid2" style="margin-top:6px">
+              <div class="field"><span>Sex</span>♀ Female</div>
+              <div class="field"><span>Birth wt</span>1.2 kg</div>
+            </div></div>
+          <div class="kidcard"><b>Kid 2 · PGF-0089</b>
+            <div class="grid2" style="margin-top:6px">
+              <div class="field"><span>Sex</span>♂ Male</div>
+              <div class="field"><span>Birth wt</span>1.4 kg</div>
+            </div></div>
+          <div class="field"><span>Colostrum within 1 hour · শাল দুধ</span>Yes ✓</div>
+          <div class="save">Save — creates 2 kids + care tasks</div>
+          <p class="hint">On save: kids join the herd with lineage auto-filled; colostrum check, dam check and PPR dues are scheduled. Queued offline entries sync automatically.</p>
+        </div>
+      </div><figcaption>The highest-stakes form: big targets, computed stillborn count, auto tag numbers.</figcaption></figure>
+    </div>
+  </section>
+</div>
