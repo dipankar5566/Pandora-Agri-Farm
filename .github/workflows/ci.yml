@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: pandora_erp
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/pandora_erp
+      SEED_OWNER_PHONE: '9999999999'
+      SEED_OWNER_PASSWORD: ci-owner-password-1
+      OPS_TOKEN: ci-ops-token-not-secret
+      # The backup e2e runs a real pg_dump; the runner's client dumps the service container.
+      PG_DUMP: pg_dump
+      BACKUP_DIR: /tmp/pandora-ci-backups
+      UPLOAD_DIR: /tmp/pandora-ci-uploads
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build contracts (must precede the API — see CLAUDE.md)
+        run: npm run build -w packages/contracts
+
+      - name: Migrate database
+        run: npx prisma migrate deploy
+
+      - name: Seed (roles, breeds, protocols, categories, counters, owner)
+        run: npm run seed
+
+      - name: Typecheck API (src + tests)
+        run: npx tsc --noEmit -p apps/api
+
+      - name: Build API
+        run: npm run build -w apps/api
+
+      - name: Build web
+        run: npm run build -w apps/web
+
+      - name: Run test suite (unit + e2e against real Postgres)
+        working-directory: apps/api
+        run: npx vitest run

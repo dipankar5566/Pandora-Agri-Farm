@@ -1,5 +1,7 @@
 # Pandora Goat Farm ERP
 
+[![CI](https://github.com/dipankar5566/Pandora-Agri-Farm/actions/workflows/ci.yml/badge.svg)](https://github.com/dipankar5566/Pandora-Agri-Farm/actions/workflows/ci.yml)
+
 A livestock management ERP built specifically for Pandora Goat Farm (Birbhum, West Bengal) — the farm's single source of truth for its herd, health, breeding, inventory, finance, and daily operations.
 
 This is **Release 1 (R1)**: the "Digital Herd Book" — everything needed to run the farm day to day. See `docs/Phase-1-Requirements.md` for the full release plan (R1/R2/R3).
