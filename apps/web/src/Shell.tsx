@@ -73,6 +73,11 @@ export default function Shell(props: {
     const next = i18n.language === 'en' ? 'bn' : 'en';
     void i18n.changeLanguage(next);
     localStorage.setItem('locale', next);
+    // App.tsx re-syncs i18n.language to me.data.locale on every render — without
+    // updating the cache here too, that stale locale reverts this change on the
+    // very next render (the PATCH below persists it server-side, but nothing
+    // refetches `me` to pick it up until a full reload).
+    qc.setQueryData<Me>(['me'], (old) => (old ? { ...old, locale: next } : old));
     void api('/auth/me', { method: 'PATCH', body: { locale: next } }).catch(() => undefined);
   };
 
