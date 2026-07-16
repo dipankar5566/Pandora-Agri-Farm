@@ -30,9 +30,22 @@ separate system — see `01-System-Architecture.md` §2.1 for why.
 | 21 | [Manufacturing](21-Manufacturing.md) | Itemized BOM, ~$1,100–3,200 total R1 hardware cost, injection-mold breakeven math |
 | 22 | [Roadmap](22-Roadmap.md) | Reconciles the brief's 5 phases against actual dependencies; Pilot → Foundation → conditional LoRaWAN → staged AI → federated future |
 
+## Pilot-stage operational documents
+
+Not design sections — working documents for actually running the Pilot
+stage (Section 22 §2.3):
+
+| Document | Summary |
+|---|---|
+| [Pilot Execution Plan](PILOT-EXECUTION-PLAN.md) | Procurement tracks, field procedure, validation targets tied to each section's evidence gate, go/no-go gate before Foundation |
+| [Shopping List](PILOT-SHOPPING-LIST.md) | Concrete India-sourced items/prices for Track A infrastructure + Track B tag-prototype commissioning guidance |
+| [RF Survey Checklist](RF-SURVEY-CHECKLIST.md) | Field checklist for the gateway-placement RF survey (Section 3 §14 / Section 6 §14) |
+| [Device Registration Runbook](DEVICE-REGISTRATION-RUNBOOK.md) | Copy-paste API commands for registering gateways/readers/env sensors/ear tags as they're physically installed |
+
 ## Status
 
-All 22 sections drafted and pending approval (see each document's own
-"Approval Gate" checklist). Once approved, implementation begins with the
-Pilot stage (Section 22 §2.3) — a separate scope of work from this design
-series.
+All 22 design sections approved (2026-07-16). A minimal pilot-scoped backend
+scaffold (`apps/api/src/modules/iot/`, `IotDevice`/`SensorReading` tables) is
+built, tested, and live — see the project memory for details. Physical pilot
+execution (procurement, RF survey, tagging) has not started; the documents
+above are the working plan for that next step.
