@@ -33,13 +33,17 @@ Follow the Quick Start in the root `README.md`: `npm install`, build contracts, 
 
 ## 2. Running the app permanently (launchd)
 
-The farm needs the app running continuously, surviving reboots, without anyone remembering to open a terminal. Three launchd agents handle this, defined in `ops/`:
+The farm needs the app running continuously, surviving reboots, without anyone remembering to open a terminal. Five launchd agents handle this, defined in `ops/`:
 
 | Agent | Does |
 |---|---|
 | `com.pandora.postgres` | Starts Postgres at login if not already running |
 | `com.pandora.api` | Builds nothing itself — runs `apps/api/dist/main.js`; restarts automatically if it crashes (`KeepAlive`) |
 | `com.pandora.backup` | Fires `pg_dump` once a night at 01:00 via the scheduled backup endpoint |
+| `com.pandora.digest` | Generates the daily notification digest once a morning at 06:00 |
+| `com.pandora.healthcheck` | At 06:15, confirms backup/digest actually ran and succeeded (not just that the plist is loaded) — appends to `/tmp/pandora-daily-check.log` and fires a native notification either way |
+
+The `backup`/`digest`/`healthcheck` jobs share a gotcha worth knowing: their `ProgramArguments` run `source __ROOT__/.env` inside a `zsh -c` string, and the project path contains spaces ("Pandora Agri Farm") — the source line in `ops/com.pandora.backup.plist` and `ops/com.pandora.digest.plist` must keep the path double-quoted (`source "__ROOT__/.env"`), or `.env` silently fails to load and `$OPS_TOKEN` comes through empty, which `${PORT:-3300}`'s fallback masks but the token has no equivalent fallback for — the API then correctly 401s every request and `curl -sf` swallows the error with zero log output. This bit us once; `healthcheck` exists specifically so it can't happen again unnoticed.
 
 ### Install
 
