@@ -9,7 +9,7 @@ export const PERM_ORDER = { none: 0, view: 1, edit: 2, approve: 3 } as const;
 
 export const MODULES = [
   'dashboard', 'livestock', 'breeding', 'health', 'inventory',
-  'feed', 'finance', 'sales', 'purchases', 'employees', 'tasks', 'settings',
+  'feed', 'finance', 'sales', 'purchases', 'employees', 'tasks', 'settings', 'iot',
 ] as const;
 export const Module = z.enum(MODULES);
 export type ModuleName = (typeof MODULES)[number];
@@ -79,3 +79,4 @@ export * from './sales';
 export * from './purchases';
 export * from './employees';
 export * from './fodder';
+export * from './iot';

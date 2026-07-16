@@ -271,10 +271,11 @@ model Animal {
   sire      Animal?        @relation("sire", fields: [sireId], references: [id])
   damKids   Animal[]       @relation("dam")
   sireKids  Animal[]       @relation("sire")
-  weights   WeightRecord[]
-  events    AnimalEvent[]
-  movements PenMovement[]
-  exit      AnimalExit?
+  weights    WeightRecord[]
+  events     AnimalEvent[]
+  movements  PenMovement[]
+  exit       AnimalExit?
+  iotDevices IotDevice[]
 
   @@index([status])
   @@index([breedId])
@@ -1234,4 +1235,59 @@ model Notification {
   @@index([channel, status])
   @@index([createdAt(sort: Desc)])
   @@map("notifications")
+}
+
+// ── IoT Pilot — minimal scaffold (docs/iot/PILOT-EXECUTION-PLAN.md §7) ──
+// Deliberately not the full Section 13/14 design: no partitioning, no
+// alert/scoring tables, no self-reporting provisioning. Just enough to
+// register ~13 pilot devices and land readings for later analysis.
+
+enum IotDeviceType {
+  ear_tag
+  ble_gateway
+  rfid_reader
+  env_sensor
+}
+
+enum IotDeviceStatus {
+  active
+  inactive
+  lost
+  retired
+}
+
+model IotDevice {
+  id              String          @id @db.Char(26)
+  deviceType      IotDeviceType   @map("device_type")
+  serialNumber    String          @map("serial_number") // partial-unique via SQL (deleted_at IS NULL)
+  animalId        String?         @map("animal_id") @db.Char(26) // ear_tag only
+  status          IotDeviceStatus @default(active)
+  apiKeyHash      String?         @map("api_key_hash") // gateway/reader/env_sensor only, sha256
+  installLocation String?         @map("install_location")
+  batteryPct      Int?            @map("battery_pct")
+  lastSeenAt      DateTime?       @map("last_seen_at")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  createdBy       String?         @map("created_by") @db.Char(26)
+  deletedAt       DateTime?       @map("deleted_at")
+  animal          Animal?         @relation(fields: [animalId], references: [id])
+  readings        SensorReading[]
+
+  @@index([deviceType, status])
+  @@index([animalId])
+  @@map("iot_devices")
+}
+
+model SensorReading {
+  id          String    @id @db.Char(26)
+  deviceId    String    @map("device_id") @db.Char(26)
+  readingType String    @map("reading_type") // plain String — extensible, not an enum (see docs/iot/14-Database.md §2.1)
+  capturedAt  DateTime  @map("captured_at")
+  value       Decimal?  @db.Decimal(10, 4)
+  valueJson   Json?     @map("value_json") // e.g. RSSI for range/coverage diagnostics
+  gatewayId   String?   @map("gateway_id") @db.Char(26) // which gateway relayed this
+  receivedAt  DateTime  @default(now()) @map("received_at")
+  device      IotDevice @relation(fields: [deviceId], references: [id])
+
+  @@index([deviceId, capturedAt(sort: Desc)])
+  @@map("sensor_readings")
 }

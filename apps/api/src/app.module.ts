@@ -23,6 +23,8 @@ import { EmployeesController } from './modules/employees/employees.controller';
 import { EmployeesService } from './modules/employees/employees.service';
 import { FodderController } from './modules/fodder/fodder.controller';
 import { FodderService } from './modules/fodder/fodder.service';
+import { IotController } from './modules/iot/iot.controller';
+import { IotService } from './modules/iot/iot.service';
 import { NotificationsController } from './modules/notifications/notifications.controller';
 import { NotificationsService } from './modules/notifications/notifications.service';
 import { ReportsService } from './modules/notifications/reports.service';
@@ -44,7 +46,7 @@ import { UsersService } from './modules/users/users.service';
  * actual domain rules.
  */
 @Module({
-  controllers: [AuthController, UsersController, RolesController, SettingsController, HerdController, BreedingController, InventoryController, HealthController, FarmOpsController, SearchController, SalesController, PurchasesController, EmployeesController, FodderController, NotificationsController],
+  controllers: [AuthController, UsersController, RolesController, SettingsController, HerdController, BreedingController, InventoryController, HealthController, FarmOpsController, SearchController, SalesController, PurchasesController, EmployeesController, FodderController, NotificationsController, IotController],
   providers: [
     PrismaService,
     AuditService,
@@ -65,6 +67,7 @@ import { UsersService } from './modules/users/users.service';
     FodderService,
     NotificationsService,
     ReportsService,
+    IotService,
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_FILTER, useClass: AppExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: IdempotencyInterceptor },
