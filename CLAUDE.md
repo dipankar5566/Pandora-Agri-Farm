@@ -12,6 +12,7 @@ apps/api/                NestJS 10 backend (TypeScript, CommonJS, built with tsc
                          notifications (+ reports), search, auth, users, roles, settings, audit
   test/unit/             DB-free rule tests        test/e2e/  real-Postgres API tests
 apps/web/                React 18 + Vite + MUI PWA — src/pages/*, src/components/*, src/locales/{en,bn}.json
+  public/icons/          app logo/icon (icon-192.png, icon-512.png) — favicon, apple-touch-icon, PWA manifest
 packages/contracts/      Zod schemas = the single validation truth (browser + server). BUILD THIS FIRST.
 prisma/                  schema.prisma, migrations/, seed.ts (idempotent upserts)
 ops/                     launchd plists (postgres, api, backup 01:00, digest 06:00), install script
