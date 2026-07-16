@@ -1207,3 +1207,31 @@ model FodderHarvest {
   @@index([cropId])
   @@map("fodder_harvests")
 }
+
+// ── R2 Module 5: Notifications ──────────────────────────────────────
+
+enum NotificationStatus {
+  pending
+  sent
+  failed
+}
+
+model Notification {
+  id         String             @id @db.Char(26)
+  type       String // 'daily_digest' | 'alert' | …
+  severity   String             @default("info") // info | warning | critical
+  titleCode  String             @map("title_code")
+  params     Json?
+  body       String? // rendered text (email body / expanded digest)
+  channel    String             @default("inapp") // inapp | email
+  status     NotificationStatus @default(pending)
+  userId     String?            @map("user_id") @db.Char(26) // null = broadcast
+  createdAt  DateTime           @default(now()) @map("created_at")
+  sentAt     DateTime?          @map("sent_at")
+  readAt     DateTime?          @map("read_at")
+  error      String?
+
+  @@index([channel, status])
+  @@index([createdAt(sort: Desc)])
+  @@map("notifications")
+}

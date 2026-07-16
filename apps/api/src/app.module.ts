@@ -23,6 +23,9 @@ import { EmployeesController } from './modules/employees/employees.controller';
 import { EmployeesService } from './modules/employees/employees.service';
 import { FodderController } from './modules/fodder/fodder.controller';
 import { FodderService } from './modules/fodder/fodder.service';
+import { NotificationsController } from './modules/notifications/notifications.controller';
+import { NotificationsService } from './modules/notifications/notifications.service';
+import { ReportsService } from './modules/notifications/reports.service';
 import { PurchasesController } from './modules/purchases/purchases.controller';
 import { PurchasesService } from './modules/purchases/purchases.service';
 import { SalesController } from './modules/sales/sales.controller';
@@ -41,7 +44,7 @@ import { UsersService } from './modules/users/users.service';
  * actual domain rules.
  */
 @Module({
-  controllers: [AuthController, UsersController, RolesController, SettingsController, HerdController, BreedingController, InventoryController, HealthController, FarmOpsController, SearchController, SalesController, PurchasesController, EmployeesController, FodderController],
+  controllers: [AuthController, UsersController, RolesController, SettingsController, HerdController, BreedingController, InventoryController, HealthController, FarmOpsController, SearchController, SalesController, PurchasesController, EmployeesController, FodderController, NotificationsController],
   providers: [
     PrismaService,
     AuditService,
@@ -60,6 +63,8 @@ import { UsersService } from './modules/users/users.service';
     PurchasesService,
     EmployeesService,
     FodderService,
+    NotificationsService,
+    ReportsService,
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_FILTER, useClass: AppExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: IdempotencyInterceptor },

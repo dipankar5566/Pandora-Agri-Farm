@@ -5,6 +5,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import GrassIcon from '@mui/icons-material/Grass';
 import GroupsIcon from '@mui/icons-material/Groups';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -27,6 +28,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { api } from './api';
 import type { Me } from './App';
 import GlobalSearch from './components/GlobalSearch';
+import NotificationBell from './components/NotificationBell';
 import { useOnlineStatus } from './useOnlineStatus';
 
 const DRAWER = 210;
@@ -58,6 +60,7 @@ export default function Shell(props: {
     { path: '/finance', label: t('nav.finance'), icon: <CurrencyRupeeIcon /> },
     { path: '/employees', label: t('nav.employees'), icon: <GroupsIcon /> },
     { path: '/tasks', label: t('nav.tasks'), icon: <TaskAltIcon /> },
+    { path: '/reports', label: t('nav.reports'), icon: <AssessmentIcon /> },
     { path: '/settings', label: t('nav.settings'), icon: <SettingsIcon /> },
   ];
   const primary = all.slice(0, 4); // phone bottom nav: Home, Herd, Breeding, Health
@@ -89,6 +92,7 @@ export default function Shell(props: {
           <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', px: 1 }}>
             <GlobalSearch />
           </Box>
+          <NotificationBell />
           <IconButton color="inherit" onClick={switchLocale} aria-label="language">
             <Typography fontWeight={700} fontSize={13}>{i18n.language === 'en' ? 'বাং' : 'EN'}</Typography>
           </IconButton>

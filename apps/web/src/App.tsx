@@ -17,6 +17,7 @@ import Fodder from './pages/Fodder';
 import Health from './pages/Health';
 import Herd from './pages/Herd';
 import Register from './pages/Register';
+import Reports from './pages/Reports';
 import Employees from './pages/Employees';
 import Purchases from './pages/Purchases';
 import Sales from './pages/Sales';
@@ -79,6 +80,7 @@ export default function App() {
             <Route path="/sales" element={<Sales />} />
             <Route path="/purchases" element={<Purchases />} />
             <Route path="/employees" element={<Employees />} />
+            <Route path="/reports" element={<Reports />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/settings" element={<Settings me={me.data} />} />
             <Route path="/animals/:id" element={<Animal />} />
