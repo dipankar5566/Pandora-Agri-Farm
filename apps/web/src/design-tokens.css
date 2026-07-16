@@ -1,0 +1,92 @@
+/* Notion Design System tokens — ported from claude.ai/design project
+ * "Notion Design System" (509557b6-140d-42bb-941f-a36fae4faf3f).
+ *
+ * Font is self-hosted via @fontsource/inter (imported in main.tsx) rather
+ * than fonts.css's Google Fonts CDN @import — this farm runs on rural
+ * connectivity and the app shouldn't depend on a reachable CDN just to
+ * render UI text.
+ *
+ * These tokens back apps/web/src/components/ds/* and inform theme.ts's
+ * mapping onto MUI. They are not consumed directly by existing MUI
+ * components (those go through theme.ts), only by the ds/ components.
+ */
+
+:root {
+  /* ── Colors (tokens/colors.css) ──────────────────────────────── */
+  --color-primary: #0075de;
+  --color-primary-active: #005bab;
+  --color-secondary: #213183;
+  --color-on-primary: #ffffff;
+
+  --color-accent-sky: #62aef0;
+  --color-accent-purple: #d6b6f6;
+  --color-accent-purple-deep: #391c57;
+  --color-accent-pink: #ff64c8;
+  --color-accent-orange: #dd5b00;
+  --color-accent-orange-deep: #793400;
+  --color-accent-teal: #2a9d99;
+  --color-accent-green: #1aae39;
+  --color-accent-brown: #523410;
+
+  --color-canvas: #ffffff;
+  --color-surface: #ffffff;
+  --color-canvas-soft: #f6f5f4;
+  --color-hairline: #e6e6e6;
+
+  --color-ink: #000000;
+  --color-ink-secondary: #31302e;
+  --color-ink-muted: #615d59;
+  --color-ink-faint: #a39e98;
+
+  /* ── Typography (tokens/typography.css) ──────────────────────── */
+  --font-family: 'Inter', -apple-system, system-ui, "Segoe UI", Roboto,
+    "Noto Sans", "Noto Sans Bengali", "Bangla MN", Helvetica, Arial,
+    sans-serif;
+
+  --font-size-display-1: 64px;   --font-weight-display-1: 700;  --line-height-display-1: 1.0;  --letter-spacing-display-1: -2.125px;
+  --font-size-display-2: 54px;   --font-weight-display-2: 700;  --line-height-display-2: 1.04; --letter-spacing-display-2: -1.875px;
+
+  --font-size-heading-1: 40px;   --font-weight-heading-1: 700;  --line-height-heading-1: 1.1;  --letter-spacing-heading-1: -1px;
+  --font-size-heading-2: 26px;   --font-weight-heading-2: 700;  --line-height-heading-2: 1.23; --letter-spacing-heading-2: -0.625px;
+  --font-size-heading-3: 22px;   --font-weight-heading-3: 700;  --line-height-heading-3: 1.27; --letter-spacing-heading-3: -0.25px;
+
+  --font-size-title: 20px;       --font-weight-title: 600;      --line-height-title: 1.4;      --letter-spacing-title: -0.125px;
+
+  --font-size-body-md: 16px;     --font-weight-body-md: 400;    --line-height-body-md: 1.5;    --letter-spacing-body-md: 0px;
+  --font-size-body-sm: 15px;     --font-weight-body-sm: 400;    --line-height-body-sm: 1.33;   --letter-spacing-body-sm: 0px;
+
+  --font-size-button: 16px;      --font-weight-button: 500;     --line-height-button: 1.5;     --letter-spacing-button: 0px;
+  --font-size-caption: 14px;     --font-weight-caption: 400;    --line-height-caption: 1.43;   --letter-spacing-caption: 0px;
+  --font-size-eyebrow: 12px;     --font-weight-eyebrow: 600;    --line-height-eyebrow: 1.33;   --letter-spacing-eyebrow: 0.125px;
+
+  /* ── Spacing (tokens/spacing.css) — 8px base ─────────────────── */
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 28px;
+  --spacing-xxl: 32px;
+
+  /* ── Radius (tokens/radius.css) ───────────────────────────────── */
+  --rounded-xs: 4px;
+  --rounded-sm: 5px;
+  --rounded-md: 8px;
+  --rounded-lg: 12px;
+  --rounded-xl: 16px;
+  --rounded-full: 9999px;
+
+  /* ── Elevation (tokens/elevation.css) — "barely-there" ───────── */
+  --shadow-level-0: none;
+  --shadow-level-1:
+    rgba(0, 0, 0, 0.010) 0px 0.175px 1.041px,
+    rgba(0, 0, 0, 0.020) 0px 0.800px 2.925px,
+    rgba(0, 0, 0, 0.027) 0px 2.025px 7.847px,
+    rgba(0, 0, 0, 0.040) 0px 4.000px 18.000px;
+  --shadow-level-2:
+    rgba(0, 0, 0, 0.010) 0px 0.175px 1.041px,
+    rgba(0, 0, 0, 0.020) 0px 0.800px 2.925px,
+    rgba(0, 0, 0, 0.027) 0px 2.025px 7.847px,
+    rgba(0, 0, 0, 0.040) 0px 4.000px 18.000px,
+    rgba(0, 0, 0, 0.050) 0px 23.00px 52.000px;
+}
