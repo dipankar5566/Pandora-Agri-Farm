@@ -10,7 +10,9 @@ apps/api/                NestJS 10 backend (TypeScript, CommonJS, built with tsc
   src/modules/<ctx>/     one dir per bounded context: herd, breeding, health, inventory,
                          sales, purchases, employees, fodder, ops (feed/finance/tasks/dashboard/backup),
                          notifications (+ reports), search, auth, users, roles, settings, audit,
-                         iot (device registration/readings), layout (farm map — design in docs/layout/)
+                         iot (device registration/readings), layout (farm map — design in docs/layout/;
+                         calibration/area math in packages/contracts/src/geometry.ts — computed areas are
+                         only as good as the GPS anchors; residuals > 5 m surface warnings across the UI)
   test/unit/             DB-free rule tests        test/e2e/  real-Postgres API tests
 apps/web/                React 18 + Vite + MUI PWA — src/pages/*, src/components/*, src/locales/{en,bn}.json
   public/icons/          app logo/icon (icon-192.png, icon-512.png) — favicon, apple-touch-icon, PWA manifest
@@ -27,6 +29,7 @@ docs/                    phase documents, RUNBOOK, USER-GUIDE
 - **tsx/esbuild breaks NestJS DI** (no decorator metadata). API builds with `tsc`; vitest uses `unplugin-swc` with `module.type: 'es6'`. Rebuild (`npm run build -w apps/api`) before running `dist` — stale dist 404s new routes.
 - Build order: `packages/contracts` before `apps/api` (api imports the compiled dist).
 - Env loads from `.env` via `set -a && source .env` — nothing reads it automatically outside launchd wrappers.
+- **Attachment uploads** are content-addressed (sha256 filename) under `data/uploads/` relative to the process cwd: repo root in production, `apps/api/` when running tests. Both are gitignored (`**/data/uploads/`) — never commit farm documents.
 
 ## Architecture rules
 
@@ -58,6 +61,7 @@ docs/                    phase documents, RUNBOOK, USER-GUIDE
 - Unit tests (`test/unit/`) are DB-free and test contracts/pure logic. E2E (`test/e2e/`) run the real Nest app + real Postgres via supertest — constraints and triggers are part of what's being tested, so no DB mocking, ever.
 - Every e2e file **cleans up its own fixtures in `afterAll`** (children before parents; `SET session_replication_role = replica` to bypass append-only triggers for cleanup only). Exit-sale fixtures also need the sale-chain cleanup block (lines → payments → ledger by `refType: 'sale_payment'` → invoices).
 - Specs are **self-healing**: if a spec computes from accumulated state (e.g. payroll from attendance), pre-clean stale fixtures in `beforeAll` rather than assuming a pristine DB.
+- Specs touching a **real singleton that holds farm data** (e.g. `site_layouts`) snapshot the row in `beforeAll`, restore it in `afterAll`, and pre-clear whatever state their assertions assume (the layout spec nulls the plan pointers so the first upload doesn't trip the dimension-change override the farm's real siteplan would cause).
 - Time-sensitive fixtures use relative dates (`past(n)`/`future(n)`/last-month helpers) — never hardcoded calendar dates.
 
 ## Commands

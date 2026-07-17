@@ -65,6 +65,12 @@ export default function SiteMap(props: { me: Me }) {
     () => (layout && layout.anchors.length >= 2 ? solveTransform(layout.anchors) : null),
     [layout],
   );
+  // with 3+ anchors the fit errors expose bad GPS points; >5 m means areas can't be trusted
+  const worstResidual = useMemo(() => {
+    if (!layout || layout.anchors.length < 3) return 0;
+    return Math.max(...(anchorResiduals(layout.anchors) ?? [0]));
+  }, [layout]);
+  const calibrationPoor = worstResidual > 5;
 
   // ── interaction state ──────────────────────────────────────────────
   const [vb, setVb] = useState<ViewBox | null>(null);
@@ -369,6 +375,11 @@ export default function SiteMap(props: { me: Me }) {
           <Chip size="small" color="warning" icon={<GpsFixedIcon />} label={t('map.notCalibrated')}
             onClick={canApprove ? openCalibrate : undefined} />
         )}
+        {transform && calibrationPoor && (
+          <Chip size="small" color="warning" icon={<GpsFixedIcon />}
+            label={t('map.poorCalibration', { m: worstResidual.toFixed(0) })}
+            onClick={canApprove ? openCalibrate : undefined} />
+        )}
         {transform && canApprove && (
           <Tooltip title={t('map.scale', { m: transform.s.toFixed(3) })}>
             <Button size="small" startIcon={<GpsFixedIcon />} onClick={openCalibrate}>{t('map.calibrate')}</Button>
@@ -580,6 +591,7 @@ export default function SiteMap(props: { me: Me }) {
           <SidePanel
             feature={selected}
             areaLabel={fmtArea(selected.kind, buffer ?? selected.geometry)}
+            calibrationWarning={calibrationPoor ? t('map.poorCalibration', { m: worstResidual.toFixed(0) }) : undefined}
             transformScale={transform?.s ?? null}
             canEdit={canEdit}
             editMode={editMode && canEdit}
@@ -659,6 +671,7 @@ function drawLegend(
 function SidePanel(props: {
   feature: MapFeature;
   areaLabel?: string;
+  calibrationWarning?: string;
   transformScale: number | null;
   canEdit: boolean;
   editMode: boolean;
@@ -702,6 +715,9 @@ function SidePanel(props: {
 
         <Stack spacing={0.75} sx={{ mt: 1.5 }}>
           {props.areaLabel && <Row k={t('map.computedArea')} v={props.areaLabel} />}
+          {props.areaLabel && props.calibrationWarning && (
+            <Alert severity="warning" sx={{ py: 0 }}>{props.calibrationWarning}</Alert>
+          )}
           {recorded !== null && (
             <Row k={t('map.recordedArea')} v={`${recorded} ${t('units.decimal')}`} />
           )}
@@ -946,6 +962,14 @@ function CalibrateDialog(props: {
           )}
           {transform && (
             <Alert severity="success" sx={{ py: 0 }}>{t('map.scale', { m: transform.s.toFixed(3) })}</Alert>
+          )}
+          {residuals && Math.max(...residuals) > 5 && (
+            <Alert severity="warning" sx={{ py: 0 }}>
+              {t('map.residualWarning', {
+                n: residuals.indexOf(Math.max(...residuals)) + 1,
+                m: Math.max(...residuals).toFixed(0),
+              })}
+            </Alert>
           )}
           {anchors.length >= 2 && maxBaseline < props.planDiag * 0.25 && (
             <Alert severity="warning" sx={{ py: 0 }}>{t('map.baselineWarning')}</Alert>

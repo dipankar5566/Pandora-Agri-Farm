@@ -525,6 +525,8 @@
   "map.anchor.clickMap": "Click the matching spot on the map…",
   "map.gpsHint": "Long-press the spot in Google Maps, copy, then paste “23.9061, 87.5412” into Lat.",
   "map.baselineWarning": "Anchors are close together — pick far-apart corners for accuracy.",
+  "map.poorCalibration": "Calibration off by ±{{m}} m — areas unreliable",
+  "map.residualWarning": "Anchors disagree by up to {{m}} m — computed areas will be wrong. Re-check anchor {{n}} (GPS and its spot on the map).",
   "status.planted": "Planted",
   "status.harvest_due": "Harvest due",
   "status.fallow": "Fallow",
