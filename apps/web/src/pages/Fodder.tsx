@@ -8,6 +8,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { api, ApiError } from '../api';
 
 const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -25,7 +26,10 @@ function useSave(onClose: (saved: boolean) => void) {
 export default function Fodder() {
   const { t } = useTranslation();
   const qc = useQueryClient();
-  const [tab, setTab] = useState(0);
+  // /fodder?plot=<id> (from the farm map) lands on the plots tab with that row highlighted
+  const [params] = useSearchParams();
+  const highlightPlot = params.get('plot');
+  const [tab, setTab] = useState(highlightPlot ? 1 : 0);
   const [dialog, setDialog] = useState<null | 'sow' | 'newPlot' | { harvest: any } | { close: any }>(null);
 
   const crops = useQuery({
@@ -108,7 +112,7 @@ export default function Fodder() {
             </TableRow></TableHead>
             <TableBody>
               {plots.data?.map((p) => (
-                <TableRow key={p.id}>
+                <TableRow key={p.id} selected={p.id === highlightPlot}>
                   <TableCell sx={{ fontWeight: 600 }}>{p.name}</TableCell>
                   <TableCell>{p.block ?? '—'}</TableCell>
                   <TableCell align="right">{p.areaDecimal ? `${Number(p.areaDecimal)} dec` : '—'}</TableCell>

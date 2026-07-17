@@ -103,6 +103,19 @@ Today's checklist. Auto-generated tasks (from kiddings, protocol dues) show up a
 
 ---
 
+## Farm Map / খামার মানচিত্র
+
+A live map of the farm: fodder plots, sheds, fences, the tube well — traced over your siteplan. Plot colours show status at a glance: **green = planted**, **amber = harvest due**, **hatched grey = fallow**. Click any shape for details; a linked plot shows its growing crop and both areas — computed from the drawing and the recorded land-record figure. **Export image** makes a PNG for WhatsApp; **Print** makes a PDF via the browser's print dialog.
+
+খামারের জীবন্ত মানচিত্র: ফডার জমি, শেড, বেড়া, নলকূপ — আপনার সাইটপ্ল্যানের উপর আঁকা। জমির রং অবস্থা দেখায়: **সবুজ = রোপিত**, **হলুদ = ফসল কাটার সময়**, **ডোরাকাটা ধূসর = পতিত**। যেকোনো আকৃতিতে ক্লিক করলে বিবরণ দেখা যায়। **ছবি ডাউনলোড** হোয়াটসঅ্যাপের জন্য PNG তৈরি করে; **প্রিন্ট** ব্রাউজারের প্রিন্ট থেকে PDF দেয়।
+
+**One-time setup (Owner/Manager):**
+1. **Upload the siteplan** — a photo or scan (JPG/PNG). If yours is a PDF, open it in macOS **Preview → File → Export → PNG** first. সাইটপ্ল্যান আপলোড করুন — PDF হলে আগে Preview দিয়ে PNG-তে রূপান্তর করুন।
+2. **Calibrate** — pick two far-apart recognisable points (opposite boundary corners work best), and for each, long-press the same spot in **Google Maps**, copy, and paste the coordinates. This makes every area and length real (katha/bigha, sq ft). A rough guess is fine to start — re-pinning later fixes all measurements without redrawing anything. ক্যালিব্রেট — দূরের দুটি চেনা বিন্দু বাছুন, গুগল ম্যাপে সেই স্থান চেপে ধরে স্থানাঙ্ক কপি-পেস্ট করুন। পরে ঠিক করলেও আঁকা কিছু নষ্ট হয় না।
+3. **Trace** — switch on edit mode, pick a tool (Plot/Building/Zone/Line/Point), click around the boundary, press **Enter**. Name it in both languages and link plots to their fodder records so the map shows what's planted where. এডিট মোড চালু করে টুল বেছে সীমানা বরাবর ক্লিক করুন, **Enter** চাপুন। দুই ভাষায় নাম দিন এবং জমিগুলো ফডার রেকর্ডের সাথে যুক্ত করুন।
+
+---
+
 ## Settings / সেটিংস
 
 **Backup** — shows when the last backup ran; the Owner can trigger one immediately with **Back up now**. **Farm** shows the farm profile and tag prefix. **Users** (Owner only) lets you create logins for other staff and assign their role — each role only sees and can do what its permission level allows.

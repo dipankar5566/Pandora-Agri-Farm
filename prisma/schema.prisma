@@ -1291,3 +1291,54 @@ model SensorReading {
   @@index([deviceId, capturedAt(sort: Desc)])
   @@map("sensor_readings")
 }
+
+// ── Site Layout (docs/layout/01-Overview-and-Data-Model.md) ─────────
+
+enum FeatureKind {
+  plot     // farming/fodder plot   → polygon
+  building // shed, store, office   → polygon
+  zone     // paddock, functional   → polygon (may overlap anything)
+  line     // fence, path, pipe     → polyline
+  point    // tube well, gate, tap  → point marker
+}
+
+model SiteLayout {
+  id               String    @id @db.Char(26)
+  name             String
+  planAttachmentId String?   @map("plan_attachment_id") @db.Char(26)
+  planWidth        Int?      @map("plan_width") // stored image px, set on upload
+  planHeight       Int?      @map("plan_height")
+  anchors          Json      @default("[]") // [{ x, y, lat, lng, label }] — geometry stays in plan px; lat/lng is derived
+  createdAt        DateTime  @default(now()) @map("created_at")
+  createdBy        String?   @map("created_by") @db.Char(26)
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  updatedBy        String?   @map("updated_by") @db.Char(26)
+  deletedAt        DateTime? @map("deleted_at")
+  deletedBy        String?   @map("deleted_by") @db.Char(26)
+  features         SiteFeature[]
+
+  @@map("site_layouts")
+}
+
+model SiteFeature {
+  id        String      @id @db.Char(26)
+  layoutId  String      @map("layout_id") @db.Char(26)
+  kind      FeatureKind
+  name      String
+  nameBn    String?     @map("name_bn")
+  geometry  Json // [[x,y],…] plan-pixel vertices; [[x,y]] for point
+  refType   String?     @map("ref_type") // 'fodder_plot' | 'shed' | 'iot_device'
+  refId     String?     @map("ref_id") @db.Char(26) // polymorphic, validated in service (attachments/stock_movements precedent)
+  zIndex    Int         @default(0) @map("z_index") // zones render beneath (default −10 set by service)
+  notes     String?
+  createdAt DateTime    @default(now()) @map("created_at")
+  createdBy String?     @map("created_by") @db.Char(26)
+  updatedAt DateTime    @updatedAt @map("updated_at")
+  updatedBy String?     @map("updated_by") @db.Char(26)
+  deletedAt DateTime?   @map("deleted_at")
+  deletedBy String?     @map("deleted_by") @db.Char(26)
+  layout    SiteLayout  @relation(fields: [layoutId], references: [id])
+
+  @@index([layoutId, kind])
+  @@map("site_features")
+}

@@ -9,7 +9,8 @@ apps/api/                NestJS 10 backend (TypeScript, CommonJS, built with tsc
   src/common/            auth guard (@Perm), Zod pipe, error filter, idempotency, request context
   src/modules/<ctx>/     one dir per bounded context: herd, breeding, health, inventory,
                          sales, purchases, employees, fodder, ops (feed/finance/tasks/dashboard/backup),
-                         notifications (+ reports), search, auth, users, roles, settings, audit
+                         notifications (+ reports), search, auth, users, roles, settings, audit,
+                         iot (device registration/readings), layout (farm map — design in docs/layout/)
   test/unit/             DB-free rule tests        test/e2e/  real-Postgres API tests
 apps/web/                React 18 + Vite + MUI PWA — src/pages/*, src/components/*, src/locales/{en,bn}.json
   public/icons/          app logo/icon (icon-192.png, icon-512.png) — favicon, apple-touch-icon, PWA manifest
@@ -53,7 +54,7 @@ docs/                    phase documents, RUNBOOK, USER-GUIDE
 
 ## Test expectations
 
-- Run: `cd apps/api && set -a && source ../../.env && set +a && npx vitest run` (Postgres must be up; contracts built). Suite is **95 tests, all green** — keep it that way; new business rules ship with tests in the same commit.
+- Run: `cd apps/api && set -a && source ../../.env && set +a && npx vitest run` (Postgres must be up; contracts built). Suite is **135 tests, all green** — keep it that way; new business rules ship with tests in the same commit.
 - Unit tests (`test/unit/`) are DB-free and test contracts/pure logic. E2E (`test/e2e/`) run the real Nest app + real Postgres via supertest — constraints and triggers are part of what's being tested, so no DB mocking, ever.
 - Every e2e file **cleans up its own fixtures in `afterAll`** (children before parents; `SET session_replication_role = replica` to bypass append-only triggers for cleanup only). Exit-sale fixtures also need the sale-chain cleanup block (lines → payments → ledger by `refType: 'sale_payment'` → invoices).
 - Specs are **self-healing**: if a spec computes from accumulated state (e.g. payroll from attendance), pre-clean stale fixtures in `beforeAll` rather than assuming a pristine DB.

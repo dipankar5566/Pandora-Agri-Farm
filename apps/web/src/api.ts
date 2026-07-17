@@ -11,7 +11,7 @@ export class ApiError extends Error {
 }
 
 interface Options {
-  method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+  method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
   body?: unknown;
   form?: FormData;
 }

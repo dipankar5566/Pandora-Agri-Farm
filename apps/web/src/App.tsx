@@ -22,6 +22,7 @@ import Employees from './pages/Employees';
 import Purchases from './pages/Purchases';
 import Sales from './pages/Sales';
 import Settings from './pages/Settings';
+import SiteMap from './pages/SiteMap';
 import Tasks from './pages/Tasks';
 import { makeTheme } from './theme';
 
@@ -76,6 +77,7 @@ export default function App() {
             <Route path="/health" element={<Health />} />
             <Route path="/feed" element={<Feed />} />
             <Route path="/fodder" element={<Fodder />} />
+            <Route path="/map" element={<SiteMap me={me.data} />} />
             <Route path="/finance" element={<Finance />} />
             <Route path="/sales" element={<Sales />} />
             <Route path="/purchases" element={<Purchases />} />

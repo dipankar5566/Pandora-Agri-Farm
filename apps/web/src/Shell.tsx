@@ -9,6 +9,7 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import LogoutIcon from '@mui/icons-material/Logout';
+import MapIcon from '@mui/icons-material/Map';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import MenuIcon from '@mui/icons-material/Menu';
 import PetsIcon from '@mui/icons-material/Pets';
@@ -55,6 +56,7 @@ export default function Shell(props: {
     { path: '/inventory', label: t('nav.inventory'), icon: <Inventory2Icon /> },
     { path: '/feed', label: t('nav.feed'), icon: <GrassIcon /> },
     { path: '/fodder', label: t('nav.fodder'), icon: <AgricultureIcon /> },
+    { path: '/map', label: t('nav.map'), icon: <MapIcon /> },
     { path: '/sales', label: t('nav.sales'), icon: <StorefrontIcon /> },
     { path: '/purchases', label: t('nav.purchases'), icon: <ShoppingCartIcon /> },
     { path: '/finance', label: t('nav.finance'), icon: <CurrencyRupeeIcon /> },

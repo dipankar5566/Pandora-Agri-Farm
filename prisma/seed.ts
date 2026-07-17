@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 const MODULES = [
   'dashboard', 'livestock', 'breeding', 'health', 'inventory',
-  'feed', 'finance', 'sales', 'purchases', 'employees', 'tasks', 'settings', 'iot',
+  'feed', 'finance', 'sales', 'purchases', 'employees', 'tasks', 'settings', 'iot', 'layout',
 ] as const;
 type Mod = (typeof MODULES)[number];
 type Level = 'none' | 'view' | 'edit' | 'approve';
@@ -20,16 +20,17 @@ const MATRIX: Record<string, Partial<Record<Mod, Level>>> = {
     dashboard: 'view', livestock: 'approve', breeding: 'approve', health: 'approve',
     inventory: 'approve', feed: 'approve', tasks: 'approve', finance: 'edit',
     sales: 'approve', purchases: 'approve', employees: 'approve', settings: 'view', iot: 'edit',
+    layout: 'approve',
   },
   veterinarian: {
     dashboard: 'view', livestock: 'view', breeding: 'edit', health: 'approve',
-    inventory: 'view', tasks: 'edit', iot: 'view',
+    inventory: 'view', tasks: 'edit', iot: 'view', layout: 'view',
   },
   supervisor: {
     dashboard: 'view', livestock: 'edit', breeding: 'edit', health: 'edit',
-    inventory: 'edit', feed: 'edit', tasks: 'edit', iot: 'view',
+    inventory: 'edit', feed: 'edit', tasks: 'edit', iot: 'view', layout: 'view',
   },
-  worker: { dashboard: 'view', livestock: 'view', feed: 'edit', tasks: 'edit' },
+  worker: { dashboard: 'view', livestock: 'view', feed: 'edit', tasks: 'edit', layout: 'view' },
   sales: { dashboard: 'view', livestock: 'view', finance: 'edit', sales: 'edit', tasks: 'view' },
   purchase_manager: { dashboard: 'view', inventory: 'approve', finance: 'edit', purchases: 'approve' },
   accountant: { dashboard: 'view', finance: 'edit', sales: 'view', purchases: 'view', employees: 'view' },
@@ -104,6 +105,13 @@ async function main(): Promise<void> {
       await prisma.pen.create({ data: { id: ulid(), shedId: shed.id, name, purpose } });
     }
     console.log('✓ default shed & pens');
+  }
+
+  // Site-layout singleton (docs/layout/05 §1 — no POST endpoint; seed owns creation).
+  const layout = await prisma.siteLayout.findFirst({ where: { deletedAt: null } });
+  if (!layout) {
+    await prisma.siteLayout.create({ data: { id: ulid(), name: 'Pandora Farm' } });
+    console.log('✓ site layout');
   }
 
   await prisma.setting.upsert({

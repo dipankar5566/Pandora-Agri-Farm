@@ -108,8 +108,11 @@ describe('herd module', () => {
   });
 
   it('guards suspicious weight jumps, then accepts with confirmation', async () => {
+    // relative date: the registration weight (21.5) is dated today, so the
+    // 30 kg record must be dated today too or currentWeightKg keeps the newer row
+    const today = new Date().toISOString().slice(0, 10);
     const blocked = await post('/api/v1/weights', {
-      date: '2026-07-16',
+      date: today,
       entries: [{ animalId: doeId, weightKg: 30.0 }], // 21.5 → 30 = +40%
     });
     expect(blocked.status).toBe(422);
@@ -117,7 +120,7 @@ describe('herd module', () => {
     expect(blocked.body.error.params.anomalies[0].tag).toBe(doeTag);
 
     const ok = await post('/api/v1/weights', {
-      date: '2026-07-16', confirmAnomalies: true,
+      date: today, confirmAnomalies: true,
       entries: [{ animalId: doeId, weightKg: 30.0 }],
     });
     expect(ok.status).toBe(201);
